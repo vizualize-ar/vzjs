@@ -1,7 +1,7 @@
 import * as THREE from '/node_modules/three/build/three.module.js';
 import { ARButton } from './jsm/webxr/ARButton.js';
 import { GLTFLoader } from './jsm/loaders/GLTFLoader.js';
-import { RotatorZoom } from './rotator.js';
+import { RotatorZoom } from './RotatorZoom.js';
 
 var container, rotateDiv;
 var camera, scene, renderer;

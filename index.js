@@ -4,9 +4,8 @@ var https = require('https')
 var app = express()
 
 app.use('/models', express.static('models'));
-app.use('/src', express.static('src'));
-app.use('/node_modules', express.static('node_modules'));
-app.use('/rotator.html', express.static('rotator.html'));
+app.use('/dist', express.static('dist'));
+app.use('/examples', express.static('examples'));
 
 app.get('/', function (req, res) {
   res.sendFile(__dirname + '/index.html');

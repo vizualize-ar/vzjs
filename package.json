@@ -3,8 +3,24 @@
   "version": "1.0.0",
   "main": "index.js",
   "license": "MIT",
+  "scripts": {
+    "compile": "tsc",
+    "build": "webpack --mode=development",
+    "start": "webpack-dev-server --https"
+  },
   "dependencies": {
     "express": "^4.17.1",
     "three": "^0.117.1"
+  },
+  "devDependencies": {
+    "copy-webpack-plugin": "^6.0.2",
+    "html-loader": "^1.1.0",
+    "html-webpack-plugin": "^4.3.0",
+    "ts-loader": "^7.0.5",
+    "tsc": "^1.20150623.0",
+    "typescript": "^3.9.5",
+    "webpack": "^4.43.0",
+    "webpack-cli": "^3.3.11",
+    "webpack-dev-server": "^3.11.0"
   }
 }
