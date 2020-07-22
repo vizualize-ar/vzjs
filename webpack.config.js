@@ -6,8 +6,11 @@ module.exports = {
   entry: {
     // main: './src/index.ts',
     rotator: './src/examples/rotator.ts',
+    "demos/simplyfit/index": './src/demos/simplyfit/index.ts',
+    "demos/lampsplus/index": './src/demos/lampsplus/index.ts',
+    "demos/gstakis/index": './src/demos/gstakis/index.ts',
   },
-  devtool: 'inline-source-map',
+  devtool: 'source-map',
   module: {
     rules: [
       {
@@ -48,10 +51,21 @@ module.exports = {
     //   chunks: ['main']
     // }),
     new CopyWebpackPlugin({
-      patterns: [{
-        from: './src/examples/**/*.html',
-        flatten: true,
-      }],
-    })
+      patterns: [
+        {
+          from: './src/examples/**/*.html',
+          flatten: true,
+        },
+        {
+          from: './src/demos/**/*',
+          transformPath(targetPath, absolutePath) {
+            return targetPath.replace("src\\", "");
+          },
+          globOptions: {
+            ignore: ['**/*.ts'],
+          },
+        }
+      ]
+    }),
   ]
 };

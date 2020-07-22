@@ -1,0 +1,1 @@
+var TurnToItemData={"counts":{"q":8,"a":11,"r":6,"ar":5.0,"rr":0,"dq":8,"da":11,"c":5,"ccWdgtC":0},"active":true};

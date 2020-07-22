@@ -14,8 +14,10 @@ const scene = new THREE.Scene();
 const camera = createCamera();
 
 addLight();
-const cube = addObjects();
-new RotatorZoom(container, cube, new RotatorZoomOptions());
+// const obj = addCube();
+// new RotatorZoom(container, obj, new RotatorZoomOptions());
+const obj = addCylinder();
+new RotatorZoom(container, obj, new RotatorZoomOptions());
 addRenderer();
 animate();
 
@@ -83,7 +85,7 @@ function addLight() {
   scene.add( directionalLight );
 }
 
-function addObjects() {
+function addCube() {
   var boxGeometry = new THREE.BoxGeometry(100, 100, 100);
 
   for (var i = 0; i < boxGeometry.faces.length; i += 2)
@@ -105,11 +107,21 @@ function addObjects() {
     vertexColors: true
   });
 
-  const cube = new THREE.Mesh(boxGeometry, cubeMaterial);
-  cube.position.y = 150;
-  scene.add(cube);
+  const obj = new THREE.Mesh(boxGeometry, cubeMaterial);
+  obj.position.y = 150;
+  scene.add(obj);
 
-  return cube;
+  return obj;
+}
+
+function addCylinder() {
+  var geometry = new THREE.CylinderBufferGeometry( 70, 70, 150, 32 );//.translate( 0, 0.1, 0 );
+  var material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
+  var obj = new THREE.Mesh( geometry, material );
+  obj.position.y = 150;
+  scene.add(obj);
+  
+  return obj;
 }
 
 function addRenderer() {

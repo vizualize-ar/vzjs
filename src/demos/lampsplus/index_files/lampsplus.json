@@ -1,0 +1,1429 @@
+var optimoveTenantConfiguration = {
+  "version": "1.0.6",
+  "realtimeMetaData": {
+    "realtimeToken": "85915e91c4fe1e576631c18773edacbf9757a6ad3644f7e8ed540cfef366bce9",
+    "realtimeGateway": "https://realtime-568-stg.optimove.net/",
+    "options": {
+      "showDimmer": false,
+      "showWatermark": false
+    }
+  },
+  "optitrackMetaData": {
+    "sendUserAgentHeader": true,
+    "useSessionStorage": true,
+    "enableHeartBeatTimer": false,
+    "heartBeatTimer": 30,
+    "eventCategoryName": "LogEvent",
+    "eventIdCustomDimensionId": 6,
+    "eventNameCustomDimensionId": 7,
+    "visitCustomDimensionsStartId": 1,
+    "maxVisitCustomDimensions": 5,
+    "actionCustomDimensionsStartId": 8,
+    "maxActionCustomDimensions": 56,
+    "optitrackEndpoint": "https://stream-568-stg.optimove.net/",
+    "siteId": 568
+  },
+  "cookieMatcherMetaData": {
+    "optimoveCookieMatcherId": "optimove_dmp",
+    "tenantToken": "aeb94079-0578-46e3-a40a-8bca38f5c8d6"
+  },
+  "datonicsCookieMatchingMetaData": {
+    "baseEndpoint": "http://fei.pro-market.net/engine?du=97;"
+  },
+  "liveRampMetaData": {
+    "baseEndpoint": "https://id.rlcdn.com/[liveRampToken].gif?cparams=",
+    "tenantToken": "aeb94079-0578-46e3-a40a-8bca38f5c8d6",
+    "liveRampTenantToken": "470966"
+  },
+  "mobile": {
+    "optipushMetaData": {
+      "enableAdvertisingIdReport": false
+    }
+  },
+  "sdkServicesEndPoint": "https://sdkuaservice.optimove.net",
+  "useLocalStorage": true,
+  "isSPA": false,
+  "enableOptitrack": true,
+  "enableVisitors": true,
+  "enableRealtime": true,
+  "enableOptipush": false,
+  "supportCookieMatcher": true,
+  "supportUserEmailStitch": false,
+  "supportDatonicsCookieMatching": false,
+  "supportLiveRamp": false,
+  "events": {
+    "set_user_id_event": {
+      "id": 1001,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": true,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        },
+        "originalVisitorId": {
+          "id": 1,
+          "name": "Original Visitor ID",
+          "configName": "originalVisitorId",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "userId": {
+          "id": 2,
+          "name": "User ID",
+          "configName": "userId",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "updatedVisitorId": {
+          "id": 3,
+          "name": "Updated Visitor ID",
+          "configName": "updatedVisitorId",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        }
+      }
+    },
+    "set_email_event": {
+      "id": 1002,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": true,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "email": {
+          "id": 1,
+          "name": "Email",
+          "configName": "email",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        }
+      }
+    },
+    "stitch_event": {
+      "id": 1004,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        },
+        "sourcePublicCustomerId": {
+          "id": 1,
+          "name": "Source Public Customer Id",
+          "configName": "sourcePublicCustomerId",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "sourceVisitorId": {
+          "id": 2,
+          "name": "Source Visitor ID",
+          "configName": "sourceVisitorId",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "targetVisitorId": {
+          "id": 3,
+          "name": "Target Visitor ID",
+          "configName": "targetVisitorId",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        }
+      }
+    },
+    "user_agent_header_event": {
+      "id": 1005,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "user_agent_header1": {
+          "id": 1,
+          "name": "User Agent Header Part 1",
+          "configName": "user_agent_header1",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "user_agent_header2": {
+          "id": 2,
+          "name": "User Agent Header Part 2",
+          "configName": "user_agent_header2",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        }
+      }
+    },
+    "set_page_visit": {
+      "id": 1006,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": true,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        },
+        "customURL": {
+          "id": 1,
+          "name": "Page URL",
+          "configName": "customURL",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "pageTitle": {
+          "id": 2,
+          "name": "Page Title",
+          "configName": "pageTitle",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "category": {
+          "id": 3,
+          "name": "Page Category",
+          "configName": "category",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        }
+      }
+    },
+    "optimove_sdk_metadata": {
+      "id": 1007,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 8
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "sdk_platform": {
+          "id": 1,
+          "name": "SDK Platform",
+          "configName": "sdk_platform",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "sdk_version": {
+          "id": 2,
+          "name": "SDK Version",
+          "configName": "sdk_version",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 13
+        },
+        "config_file_url": {
+          "id": 3,
+          "name": "Config file URL",
+          "configName": "config_file_url",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 14
+        },
+        "app_ns": {
+          "id": 4,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 15
+        }
+      }
+    },
+    "web_popup_displayed": {
+      "id": 1008,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": true,
+      "parameters": {
+        "campaign_detail_id": {
+          "id": 1,
+          "name": "Campaign Detail ID",
+          "configName": "campaign_detail_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 8
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "template_id": {
+          "id": 2,
+          "name": "Template ID",
+          "configName": "template_id",
+          "type": "Number",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        }
+      }
+    },
+    "set_screen_visit": {
+      "id": 1009,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": true,
+      "parameters": {
+        "screen_name": {
+          "id": 1,
+          "name": "Screen Name",
+          "configName": "screen_name",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 8
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        }
+      }
+    },
+    "set_advertising_id": {
+      "id": 1010,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        },
+        "advertising_id": {
+          "id": 1,
+          "name": "Advertising ID",
+          "configName": "advertising_id",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "device_id": {
+          "id": 2,
+          "name": "Device ID",
+          "configName": "device_id",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "app_ns": {
+          "id": 3,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        }
+      }
+    },
+    "notification_delivered": {
+      "id": 1012,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 15
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 16
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 17
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 18
+        },
+        "timestamp": {
+          "id": 1,
+          "name": "Timestamp",
+          "configName": "timestamp",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "app_ns": {
+          "id": 2,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "campaign_id": {
+          "id": 3,
+          "name": "Plan ID",
+          "configName": "campaign_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        },
+        "action_serial": {
+          "id": 4,
+          "name": "Action Serial",
+          "configName": "action_serial",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 11
+        },
+        "template_id": {
+          "id": 5,
+          "name": "Template ID",
+          "configName": "template_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "engagement_id": {
+          "id": 6,
+          "name": "Engagement ID",
+          "configName": "engagement_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 13
+        },
+        "campaign_type": {
+          "id": 7,
+          "name": "Campaign Type",
+          "configName": "campaign_type",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 14
+        }
+      }
+    },
+    "notification_opened": {
+      "id": 1013,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 15
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 16
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 17
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 18
+        },
+        "timestamp": {
+          "id": 1,
+          "name": "Timestamp",
+          "configName": "timestamp",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "app_ns": {
+          "id": 2,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "campaign_id": {
+          "id": 3,
+          "name": "Plan ID",
+          "configName": "campaign_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        },
+        "action_serial": {
+          "id": 4,
+          "name": "Action Serial",
+          "configName": "action_serial",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 11
+        },
+        "template_id": {
+          "id": 5,
+          "name": "Template ID",
+          "configName": "template_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "engagement_id": {
+          "id": 6,
+          "name": "Engagement ID",
+          "configName": "engagement_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 13
+        },
+        "campaign_type": {
+          "id": 7,
+          "name": "Campaign Type",
+          "configName": "campaign_type",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 14
+        }
+      }
+    },
+    "notification_dismissed": {
+      "id": 1014,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "campaign_type": {
+          "id": 7,
+          "name": "Campaign Type",
+          "configName": "campaign_type",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 14
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 15
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 16
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 17
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 18
+        },
+        "timestamp": {
+          "id": 1,
+          "name": "Timestamp",
+          "configName": "timestamp",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "app_ns": {
+          "id": 2,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "campaign_id": {
+          "id": 3,
+          "name": "Plan ID",
+          "configName": "campaign_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        },
+        "action_serial": {
+          "id": 4,
+          "name": "Action Serial",
+          "configName": "action_serial",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 11
+        },
+        "template_id": {
+          "id": 5,
+          "name": "Template ID",
+          "configName": "template_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "engagement_id": {
+          "id": 6,
+          "name": "Engagement ID",
+          "configName": "engagement_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 13
+        }
+      }
+    },
+    "before_set_user_id": {
+      "id": 1015,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "original_visitor_id": {
+          "id": 1,
+          "name": "original_visitor_id",
+          "configName": "original_visitor_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 8
+        },
+        "user_id": {
+          "id": 2,
+          "name": "user_id",
+          "configName": "user_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        }
+      }
+    },
+    "after_set_user_id": {
+      "id": 1016,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "original_visitor_id": {
+          "id": 1,
+          "name": "original_visitor_id",
+          "configName": "original_visitor_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 8
+        },
+        "user_id": {
+          "id": 2,
+          "name": "user_id",
+          "configName": "user_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        }
+      }
+    },
+    "optipush_opt_in": {
+      "id": 1017,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "timestamp": {
+          "id": 1,
+          "name": "Timestamp",
+          "configName": "timestamp",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "app_ns": {
+          "id": 2,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "device_id": {
+          "id": 3,
+          "name": "Device ID",
+          "configName": "device_id",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        }
+      }
+    },
+    "optipush_opt_out": {
+      "id": 1018,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "timestamp": {
+          "id": 1,
+          "name": "Timestamp",
+          "configName": "timestamp",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "app_ns": {
+          "id": 2,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "device_id": {
+          "id": 3,
+          "name": "Device ID",
+          "configName": "device_id",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 10
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        }
+      }
+    },
+    "notification_ping": {
+      "id": 1019,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "app_ns": {
+          "id": 1,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "device_id": {
+          "id": 2,
+          "name": "Device ID",
+          "configName": "device_id",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "user_id": {
+          "id": 3,
+          "name": "User ID",
+          "configName": "user_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "visitor_id": {
+          "id": 4,
+          "name": "Visitor ID",
+          "configName": "visitor_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 15
+        }
+      }
+    },
+    "app_open": {
+      "id": 1020,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "app_ns": {
+          "id": 1,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 8
+        },
+        "device_id": {
+          "id": 2,
+          "name": "Device ID",
+          "configName": "device_id",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 9
+        },
+        "user_id": {
+          "id": 3,
+          "name": "User ID",
+          "configName": "user_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "visitor_id": {
+          "id": 4,
+          "name": "Visitor ID",
+          "configName": "visitor_id",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 12
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 13
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 14
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 15
+        }
+      }
+    },
+    "triggered_notification_received": {
+      "id": 1021,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "timestamp": {
+          "id": 1,
+          "name": "Timestamp",
+          "configName": "timestamp",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "app_ns": {
+          "id": 2,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 13
+        },
+        "action_serial": {
+          "id": 3,
+          "name": "Action Serial",
+          "configName": "action_serial",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 14
+        },
+        "template_id": {
+          "id": 4,
+          "name": "Template ID",
+          "configName": "template_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 15
+        },
+        "action_id": {
+          "id": 5,
+          "name": "Action ID",
+          "configName": "action_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 16
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 8
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        }
+      }
+    },
+    "triggered_notification_opened": {
+      "id": 1022,
+      "supportedOnOptitrack": true,
+      "supportedOnRealTime": false,
+      "parameters": {
+        "timestamp": {
+          "id": 1,
+          "name": "Timestamp",
+          "configName": "timestamp",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 12
+        },
+        "app_ns": {
+          "id": 2,
+          "name": "App Namespace",
+          "configName": "app_ns",
+          "type": "String",
+          "optional": false,
+          "optiTrackDimensionId": 13
+        },
+        "action_serial": {
+          "id": 3,
+          "name": "Action Serial",
+          "configName": "action_serial",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 14
+        },
+        "template_id": {
+          "id": 4,
+          "name": "Template ID",
+          "configName": "template_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 15
+        },
+        "action_id": {
+          "id": 5,
+          "name": "Action ID",
+          "configName": "action_id",
+          "type": "Number",
+          "optional": false,
+          "optiTrackDimensionId": 16
+        },
+        "event_platform": {
+          "id": 1000,
+          "name": "Platform",
+          "configName": "event_platform",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 8
+        },
+        "event_device_type": {
+          "id": 1001,
+          "name": "Device Type",
+          "configName": "event_device_type",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 9
+        },
+        "event_os": {
+          "id": 1002,
+          "name": "OS",
+          "configName": "event_os",
+          "type": "String",
+          "optional": true,
+          "optiTrackDimensionId": 10
+        },
+        "event_native_mobile": {
+          "id": 1003,
+          "name": "Native Mobile",
+          "configName": "event_native_mobile",
+          "type": "Boolean",
+          "optional": true,
+          "optiTrackDimensionId": 11
+        }
+      }
+    },
+    "email_delivered": {
+      "id": 1030,
+      "supportedOnOptitrack": false,
+      "supportedOnRealTime": true,
+      "parameters": {}
+    },
+    "email_opened": {
+      "id": 1031,
+      "supportedOnOptitrack": false,
+      "supportedOnRealTime": true,
+      "parameters": {}
+    },
+    "email_unsubscribed": {
+      "id": 1032,
+      "supportedOnOptitrack": false,
+      "supportedOnRealTime": true,
+      "parameters": {}
+    },
+    "email_clicked": {
+      "id": 1033,
+      "supportedOnOptitrack": false,
+      "supportedOnRealTime": true,
+      "parameters": {}
+    }
+  },
+  "supportAirship": false
+}

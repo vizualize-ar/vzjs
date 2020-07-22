@@ -5,8 +5,8 @@
   "license": "MIT",
   "scripts": {
     "compile": "tsc",
-    "build": "webpack --mode=development",
-    "start": "webpack-dev-server --https"
+    "build": "webpack --mode=production",
+    "start": "webpack-dev-server --https --host 0.0.0.0 --port 5000 --disable-host-check"
   },
   "dependencies": {
     "express": "^4.17.1",

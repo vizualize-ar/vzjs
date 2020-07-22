@@ -1,0 +1,55 @@
+<html>
+    <head>
+    </head>
+    <body>
+        <div id="container"></div>
+        <script type="module">
+            import * as THREE from 'https://threejs.org/build/three.module.js';
+
+            var width = window.innerWidth;
+            var height = window.innerHeight;
+            
+            var container;
+            var camera, scene, renderer;
+
+            init();
+            render();
+
+            function init() {
+
+                container = document.getElementById( "container" );
+                scene = new THREE.Scene();
+
+                camera = new THREE.PerspectiveCamera(45, width / height, 1, 1000);
+				// camera.position.x = -30;
+				// camera.position.y = 40;
+				camera.position.z = 100;
+				camera.lookAt( scene.position );
+
+				renderer = new THREE.WebGLRenderer();
+				renderer.setPixelRatio( window.devicePixelRatio );
+				renderer.setSize( width, height );
+                container.appendChild( renderer.domElement );
+                
+                loadModel();
+            }
+
+            function render() {
+                requestAnimationFrame(render);
+                renderer.render( scene, camera );
+            }
+
+            async function loadModel() {
+                var loader = new THREE.TextureLoader();
+                const texture = await loader.loadAsync("./models/tupac.png");
+                var img = new THREE.MeshBasicMaterial({
+                    map: texture,
+                });
+
+                const model = new THREE.Mesh(new THREE.PlaneGeometry(40, 30), img);
+                model.lookAt(0, 1, 0);
+                scene.add(model);
+            }
+        </script>
+    </body>
+</html>

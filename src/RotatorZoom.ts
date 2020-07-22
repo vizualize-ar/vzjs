@@ -1,10 +1,10 @@
 import * as THREE from "three";
 import Rotator from "./Rotator";
 import Zoomer from "./Zoomer";
+import { ModelDimension } from "./ModelLoader";
 
 export class RotatorZoomOptions {
-	constructor(public zoom: boolean = true, public rotate: boolean = true) {
-
+	constructor(public zoom: boolean = true, public rotate: boolean = true, public dimension = ModelDimension.three_d) {
 	}
 }
 
