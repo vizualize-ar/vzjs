@@ -5,7 +5,8 @@ var CopyWebpackPlugin = require('copy-webpack-plugin');
 module.exports = {
   entry: {
     // main: './src/index.ts',
-    rotator: './src/examples/rotator.ts',
+    "examples/rotator": './src/examples/rotator.ts',
+    "examples/translate": './src/examples/translate.ts',
     "demos/simplyfit/index": './src/demos/simplyfit/index.ts',
     "demos/lampsplus/index": './src/demos/lampsplus/index.ts',
     "demos/gstakis/index": './src/demos/gstakis/index.ts',
@@ -54,7 +55,12 @@ module.exports = {
       patterns: [
         {
           from: './src/examples/**/*.html',
-          flatten: true,
+          transformPath(targetPath, absolutePath) {
+            return targetPath.replace("src\\", "");
+          },
+          globOptions: {
+            ignore: ['**/*.ts'],
+          },
         },
         {
           from: './src/demos/**/*',

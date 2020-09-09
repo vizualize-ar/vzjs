@@ -1,2 +1,5 @@
-import { ModelLoader, ModelResource, ModelType } from "../../ModelLoader";
-new ModelLoader(new ModelResource('./models/simplyfitgreen.gltf', ModelType.GTLF));
+import { ModelLoader, ModelOptions, ModelType, LoaderOptions } from "../../ModelLoader";
+new ModelLoader(
+  new ModelOptions('./models/simplyfitgreen.gltf', ModelType.GTLF),
+  new LoaderOptions(true, true, true),
+);

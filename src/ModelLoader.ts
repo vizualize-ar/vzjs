@@ -6,6 +6,10 @@ import { GLTFLoader } from './jsm/loaders/GLTFLoader';
 import { FBXLoader } from "./jsm/loaders/FBXLoader";
 // import { RotatorZoom } from './rotator.js';
 
+import * as dat from "dat.gui";
+// import init from "three-dat.gui"; // Import initialization method
+// init(dat); // Init three-dat.gui with Dat
+
 export enum ModelType {
   GTLF = "GTLF",
   FBX = "FBX",
@@ -19,9 +23,39 @@ export enum ModelDimension {
   two_d = "two_d"
 }
 
-export class ModelResource {
-  constructor(public path: string, public type: ModelType, public dimension = ModelDimension.three_d) {}
+export enum PlaneDirection {
+  /** Model should be placed on a horizontal plane (eg, table). */
+  horizontal = "horizontal",
+  /** Model should be placed on a vertical plan (eg, wall). */
+  vertical = "vertical",
 }
+
+export class LoaderOptions {
+  constructor(
+    public zoom: boolean = true,
+    public rotate: boolean = true,
+    public pan: boolean = true
+  ){}
+}
+
+export class ModelOptions {
+  constructor(
+    public path: string,
+    public type: ModelType,
+    public dimension = ModelDimension.three_d,
+    public maxRotationDegrees = 180,
+    public planeDirection: PlaneDirection = PlaneDirection.horizontal,
+    public aspectRatio?: number,
+    /** Width, in meters */
+    public width?: number,
+    /** Height, in meters */
+    public height?: number,
+  ) {}
+}
+
+const REAL_WORLD_GEOMETRY = false;
+const REAL_WORLD_GEOMETRY_MAX_POINTS = 500;
+const DEBUG_CONTROLS = false;
 
 export class ModelLoader {
   private container: HTMLElement = null;
@@ -39,15 +73,25 @@ export class ModelLoader {
   private hitTestSource: any = null;
   private hitTestSourceRequested = false;
 
+  public static DatGui: dat.GUI;
+
+  /** Real world geometry plane detected. */
+  private realWorldPlane: any;
+
   // var control;
 
   // init();
   // animate();
 
-  constructor(private resource: ModelResource) {
+  constructor(private resource: ModelOptions, private loaderOptions: LoaderOptions) {
     this.loadResource();
     this.overlayDiv = document.getElementById( "overlay" );
     window.document.getElementById('ar-trigger').addEventListener('click', () => this.initAR());
+
+    if (DEBUG_CONTROLS) {
+      ModelLoader.DatGui = new dat.GUI();
+      this.overlayDiv.append(ModelLoader.DatGui.domElement);
+    }
   }
 
   initAR() {
@@ -72,7 +116,18 @@ export class ModelLoader {
     document.body.appendChild( this.container );
 
     this.rotateDiv = document.getElementById( 'rotate' );
-    new RotatorZoom(this.rotateDiv, this.model, new RotatorZoomOptions(true, true, this.resource.dimension));
+    new RotatorZoom(
+      this.rotateDiv,
+      this.model,
+      new RotatorZoomOptions(
+        this.loaderOptions.zoom,
+        this.loaderOptions.rotate,
+        this.loaderOptions.pan,
+        this.resource.dimension,
+        this.resource.maxRotationDegrees,
+        this.resource.planeDirection
+      ),
+    );
 
     this.scene = new THREE.Scene();
     this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
@@ -105,6 +160,15 @@ export class ModelLoader {
     });
     this.renderer.xr.setReferenceSpaceType( 'local' );
     this.renderer.xr.setSession( session );
+
+    if (REAL_WORLD_GEOMETRY) {
+      // Enable real world geometry tracking
+      session.updateWorldTrackingState({
+        planeDetectionState : {
+            enabled : true
+        }
+      });
+    }
 
     document.getElementById('exit').addEventListener('click', () => {
       this.overlayDiv.style.display = "none";
@@ -228,14 +292,34 @@ export class ModelLoader {
 
   async loadPNGResource(): Promise<void> {
     var loader = new THREE.TextureLoader();
-    const texture = await loader.loadAsync(this.resource.path);
+    const texture: THREE.DataTexture = await loader.loadAsync(this.resource.path);
     var img = new THREE.MeshBasicMaterial({
       map: texture,
     });
 
-    this.model = new THREE.Mesh(new THREE.PlaneGeometry().rotateX( - Math.PI / 2 ), img);
+    //this.model = new THREE.Mesh(new THREE.PlaneGeometry().rotateX( - Math.PI / 2 ), img);
+    let modelGeometery: THREE.PlaneGeometry = new THREE.PlaneGeometry(0.9, 0.9 / this.resource.aspectRatio);
+    if (this.resource.width && this.resource.height) {
+      modelGeometery = new THREE.PlaneGeometry(this.resource.width, this.resource.height);
+    }
+    if (this.resource.width) {
+      modelGeometery = new THREE.PlaneGeometry(this.resource.width, this.resource.width / this.resource.aspectRatio);
+    }
+    this.model = new THREE.Mesh(modelGeometery, img);
     this.model.visible = false;
-    this.model.lookAt(0, 1, 0);
+    // this.model.lookAt(0, 1, 0);
+
+    if (DEBUG_CONTROLS) {
+      const guiPosition = ModelLoader.DatGui.addFolder("position");
+      guiPosition.add(this.model.position, "x", -6, 6, 0.001);
+      guiPosition.add(this.model.position, "y", -6, 6, 0.001);
+      guiPosition.add(this.model.position, "z", -6, 6, 0.001);
+
+      const guiRotation = ModelLoader.DatGui.addFolder("rotation");
+      guiRotation.add(this.model.rotation, "x", -6, 6, 0.001)
+      guiRotation.add(this.model.rotation, "y", -6, 6, 0.001)
+      guiRotation.add(this.model.rotation, "z", -6, 6, 0.001);
+    }
     return Promise.resolve();
   }
 
@@ -255,7 +339,21 @@ export class ModelLoader {
     // this.renderer.setAnimationLoop(this.render);
   }
 
-  render (timestamp: any, frame: any): any {
+  render (timestamp: any, frame: XRFrame): any {
+
+    if (REAL_WORLD_GEOMETRY && frame) {
+      let detectedPlanes = frame.worldInformation.detectedPlanes;
+      if (detectedPlanes.size > 0) {
+        var referenceSpace = this.renderer.xr.getReferenceSpace();
+        detectedPlanes.forEach((plane: any) => {
+            let planePose = frame.getPose(plane.planeSpace, referenceSpace);
+            let planeVertices = plane.polygon; // plane.polygon is an array of objects containing x,y,z coordinates
+        
+            // ...draw plane_vertices relative to plane_pose...
+            this.drawPlane(planePose, planeVertices);
+        });
+      }
+    }
 
     if (frame && !this.modelPositioned) {
 
@@ -290,6 +388,8 @@ export class ModelLoader {
           var hit = hitTestResults[ 0 ];
           const pose = hit.getPose( referenceSpace );
           const hitMatrix = pose.transform.matrix;
+
+          this.logPose(pose);
           
           // this.reticle.matrix.fromArray( hitMatrix );
           // this.reticle.visible = true;
@@ -298,11 +398,13 @@ export class ModelLoader {
           const mat = new THREE.Matrix4();
           mat.fromArray( hitMatrix );
           this.model.position.setFromMatrixPosition(mat);
-          this.model.rotation.setFromRotationMatrix(mat);
+          // this.model.rotation.setFromRotationMatrix(mat);
           
           this.model.visible = true;
 
           document.getElementById('positionMessage').style.display = "";
+
+          // this.addTransformLines(pose.transform);
         } else {
           this.reticle.visible = false;
           this.model.visible = false;
@@ -313,6 +415,193 @@ export class ModelLoader {
       }
     }
 
+    // if (this.model.visible) {
+    //   this.addModelLines();
+    // }
+
     this.renderer.render(this.scene, this.camera);
+    
+    if (DEBUG_CONTROLS) {
+      ModelLoader.DatGui.updateDisplay();
+    }
   }
+
+  xLine: THREE.Line;
+  yLine: THREE.Line;
+  zLine: THREE.Line;
+  rxLine: THREE.Line;
+  ryLine: THREE.Line;
+  rzLine: THREE.Line;
+
+  addModelLines() {
+    // var linegeometry = new THREE.Geometry();
+    // // linegeometry.vertices.push( new THREE.Vector3(0, 0, 0), this.model.position );
+    // linegeometry.vertices.push( this.camera.position, this.model.position ); // draws line from origin to model
+    // var line = new THREE.Line( linegeometry, new THREE.LineBasicMaterial( {
+    //     color: 0x33eeef,
+    // } ) );
+    // this.scene.add( line );
+
+    // add x line
+    if (this.xLine) {
+      this.scene.remove(this.xLine);
+    }
+    var xGeometry = new THREE.Geometry();
+    xGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x + 0.5, this.model.position.y, this.model.position.z) );
+    this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
+        color: "red",
+    } ) );
+    this.scene.add( this.xLine );
+
+    // add y line
+    if (this.yLine) {
+      this.scene.remove(this.yLine);
+    }
+    var yGeometry = new THREE.Geometry();
+    yGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y + 0.5, this.model.position.z) );
+    this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
+        color: "green",
+    } ) );
+    this.scene.add( this.yLine );
+
+    // add z line
+    if (this.zLine) {
+      this.scene.remove(this.zLine);
+    }
+    var zGeometry = new THREE.Geometry();
+    zGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y, this.model.position.z + 0.5) );
+    this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
+        color: "blue",
+    } ) );
+    this.scene.add( this.zLine );
+
+    ////////////
+    if (this.rxLine) {
+      this.scene.remove(this.rxLine);
+    }
+    var zGeometry = new THREE.Geometry();
+    var rotation = this.model.rotation.toVector3();
+    zGeometry.vertices.push( rotation, new THREE.Vector3(rotation.x + 0.5, rotation.y, rotation.z) );
+    this.rxLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
+        color: "yellow",
+    } ) );
+    this.scene.add( this.rxLine );
+  }
+
+  addTransformLines(transform: XRRigidTransform) {
+    // var linegeometry = new THREE.Geometry();
+    // // linegeometry.vertices.push( new THREE.Vector3(0, 0, 0), this.model.position );
+    // linegeometry.vertices.push( this.camera.position, this.model.position ); // draws line from origin to model
+    // var line = new THREE.Line( linegeometry, new THREE.LineBasicMaterial( {
+    //     color: 0x33eeef,
+    // } ) );
+    // this.scene.add( line );
+
+    var startVector = new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z);
+
+    // draw model x axis
+    if (this.xLine) {
+      this.scene.remove(this.xLine);
+    }
+    var xGeometry = new THREE.Geometry();
+    xGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x + 0.5, transform.position.y, transform.position.z) );
+    this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
+        color: 0xff6666,
+    } ) );
+    this.scene.add( this.xLine );
+
+    // add y line
+    if (this.yLine) {
+      this.scene.remove(this.yLine);
+    }
+    var yGeometry = new THREE.Geometry();
+    yGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y + 0.5, transform.position.z) );
+    this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
+        color: 0x66ff66,
+    } ) );
+    this.scene.add( this.yLine );
+
+    // add z line
+    if (this.zLine) {
+      this.scene.remove(this.zLine);
+    }
+    var zGeometry = new THREE.Geometry();
+    zGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z + 0.5) );
+    this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
+        color: 0x6666ff,
+    } ) );
+    this.scene.add( this.zLine );
+  }
+
+
+  logPose(pose: any) {
+    if (!DEBUG_CONTROLS) return;
+
+    if ((ModelLoader.DatGui.__folders as any).pose) {
+      ModelLoader.DatGui.removeFolder((ModelLoader.DatGui.__folders as any).pose);
+    }
+    const guiPose = ModelLoader.DatGui.addFolder("pose");
+    let gui = guiPose.addFolder("position");
+    gui.add(pose.transform.position, "w", -6, 6, 0.001)
+    gui.add(pose.transform.position, "x", -6, 6, 0.001)
+    gui.add(pose.transform.position, "y", -6, 6, 0.001)
+    gui.add(pose.transform.position, "z", -6, 6, 0.001);
+    gui.open();
+
+    gui = guiPose.addFolder("orientation");
+    gui.add(pose.transform.orientation, "w", -6, 6, 0.001)
+    gui.add(pose.transform.orientation, "x", -6, 6, 0.001)
+    gui.add(pose.transform.orientation, "y", -6, 6, 0.001)
+    gui.add(pose.transform.orientation, "z", -6, 6, 0.001);
+    gui.open();
+    
+    guiPose.open();
+  }
+
+  drawPlane(pose: any, vertices: any) {
+    // geometry
+    var geometry = new THREE.BufferGeometry();
+
+    // attributes
+    var positions = new Float32Array( REAL_WORLD_GEOMETRY_MAX_POINTS * 3 ); // 3 vertices per point
+    var index = 0;
+    for ( var i = 0; i < vertices.length;  i ++ ) {
+        positions[ index ++ ] = vertices[i].x;
+        positions[ index ++ ] = vertices[i].y;
+        positions[ index ++ ] = vertices[i].z;
+    }
+    geometry.addAttribute( 'position', new THREE.BufferAttribute( positions, 3 ) );
+    
+    // drawCalls
+    geometry.setDrawRange( 0, vertices.length );
+
+    // material
+    var material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 2 } );
+
+    // line
+    const line = new THREE.Line( geometry,  material );
+    
+    // var positions = line.geometry.attributes.position.array;                        
+    // var index = 0;
+    // for ( var i = 0; i < vertices.length;  i ++ ) {
+    //     positions[ index ++ ] = vertices[i].x;
+    //     positions[ index ++ ] = vertices[i].y;
+    //     positions[ index ++ ] = vertices[i].z;
+    // }
+    // line.geometry.setDrawRange( 0, vertices.length );
+
+    // Set position relative to pose
+    const poseMatrix = pose.transform.matrix;
+
+    const mat = new THREE.Matrix4();
+    mat.fromArray( poseMatrix );
+    line.position.setFromMatrixPosition(mat);
+    line.rotation.setFromRotationMatrix(mat);
+    
+    if (this.realWorldPlane) {
+        this.scene.remove(this.realWorldPlane);
+    }
+    this.scene.add(line);
+    this.realWorldPlane = line;
+}
 }

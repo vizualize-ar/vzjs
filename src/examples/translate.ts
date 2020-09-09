@@ -1,6 +1,7 @@
 import * as THREE from "three";
-import { RotatorZoom, RotatorZoomOptions } from "../RotatorZoom";
-import { ModelDimension, PlaneDirection } from "../ModelLoader";
+// import { RotatorZoom, RotatorZoomOptions } from "../RotatorZoom";
+import * as Hammer from "hammerjs";
+import { Vector3 } from "three";
 
 let renderer: THREE.Renderer;
 
@@ -17,9 +18,38 @@ const camera = createCamera();
 addLight();
 const obj = addCube();
 // const obj = addCylinder();
-new RotatorZoom(container, obj, new RotatorZoomOptions(true, true, true, ModelDimension.three_d, 180, PlaneDirection.horizontal));
 addRenderer();
 animate();
+// new RotatorZoom(container, obj, new RotatorZoomOptions(false, false, true));
+const hammer: HammerManager = new Hammer(container);
+
+hammer.on('pan', function(ev) {
+  console.log('panning', ev);
+  const pos = screenToWorld(ev.deltaX, ev.deltaY, camera);
+  obj.translateX(ev.deltaX);
+  obj.translateY(ev.deltaY);
+});
+
+function screenToWorld(screenX: number, screenY: number, camera: THREE.Camera)
+{
+    const pos = new Vector3();
+    const dir = new Vector3();
+
+    pos.set(
+        -1.0 + 2.0 * screenX / window.innerWidth,
+        -1.0 + 2.0 * screenY / window.innerHeight,
+        0.5
+    ).unproject( camera );
+
+    // Calculate a unit vector from the camera to the projected position
+    dir.copy( pos ).sub( camera.position ).normalize();
+
+    // Project onto z=0
+    let flDistance = -camera.position.z / dir.z;
+    const newPosition = new THREE.Vector3();
+    newPosition.copy( camera.position ).add( dir.multiplyScalar( flDistance ) );
+    return newPosition;
+}
 
 window.addEventListener('resize', () =>
 {

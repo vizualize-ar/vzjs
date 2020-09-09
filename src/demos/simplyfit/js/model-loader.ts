@@ -3,6 +3,7 @@ import * as THREE from "three";
 import { RotatorZoom, RotatorZoomOptions } from "../../../RotatorZoom";
 // import { ARButton } from './jsm/webxr/ARButton.js';
 import { GLTFLoader } from '../../../jsm/loaders/GLTFLoader.js';
+import { ModelDimension, PlaneDirection } from "../../../ModelLoader";
 // import { RotatorZoom } from './rotator.js';
 
 var container, rotateDiv;
@@ -40,7 +41,7 @@ function init(session: any) {
   document.body.appendChild( container );
 
   rotateDiv = document.getElementById( 'rotate' );
-  new RotatorZoom(rotateDiv, model.scene, new RotatorZoomOptions(true, true));
+  new RotatorZoom(rotateDiv, model.scene, new RotatorZoomOptions(true, true, true, ModelDimension.three_d, 180, PlaneDirection.horizontal));
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );

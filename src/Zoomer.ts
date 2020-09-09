@@ -13,7 +13,7 @@ export default class Zoomer {
   /**
    * Can zoom if there's more than 1 pointer event now.
    */
-  get canZoom() {
+  get isZoom() {
 		// console.log("zoom: is zooming", this.eventCache.length > 1);
 		return this.eventCache.length > 1;
 	}
