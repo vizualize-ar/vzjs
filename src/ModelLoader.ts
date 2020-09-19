@@ -61,6 +61,9 @@ export class ModelLoader {
   private container: HTMLElement = null;
   private rotateDiv: HTMLElement = null;
   private overlayDiv: HTMLElement = null;
+  private positionMessageElement: HTMLElement = null;
+  private addCartElement: HTMLElement = null;
+
   private camera: THREE.PerspectiveCamera = null;
   private scene: THREE.Scene = null;
   private renderer: THREE.WebGLRenderer = null;
@@ -84,17 +87,42 @@ export class ModelLoader {
   // animate();
 
   constructor(private resource: ModelOptions, private loaderOptions: LoaderOptions) {
+    this.init();
+  }
+
+  async init(): Promise<void> {
+    // do nothing if AR is not supported
+    if (!await this.isARSupported()) return;
+
     this.loadResource();
-    this.overlayDiv = document.getElementById( "overlay" );
-    window.document.getElementById('ar-trigger').addEventListener('click', () => this.initAR());
+    this.overlayDiv = document.querySelector('[data-vzid="ol"]');
+    // const trigger = window.document.getElementById('ar-trigger');
+    const trigger = document.querySelector<HTMLElement>('[data-vzid="ar-trigger"]');
+    trigger.style.display = '';
+    trigger.addEventListener('click', () => this.initAR());
 
     if (DEBUG_CONTROLS) {
       ModelLoader.DatGui = new dat.GUI();
       this.overlayDiv.append(ModelLoader.DatGui.domElement);
     }
+    this.positionMessageElement = document.querySelector<HTMLElement>('[data-vzid="position-message"]');
+    this.positionMessageElement.style.display = 'none';
+
+    this.addCartElement = document.querySelector<HTMLElement>('[data-vzid="add-cart"]');
+    this.addCartElement.style.display = 'none';
   }
 
-  initAR() {
+  async isARSupported(): Promise<boolean> {
+    // Check to see if the UA can support an AR sessions.
+    try {
+      const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
+      return isSupported;
+    } catch {
+      return false;
+    }
+  }
+
+  initAR(): void {
     if (!this.model) {
       setTimeout(() => this.initAR(), 100);
       return;
@@ -115,7 +143,8 @@ export class ModelLoader {
     this.container = document.createElement( 'div' );
     document.body.appendChild( this.container );
 
-    this.rotateDiv = document.getElementById( 'rotate' );
+    // this.rotateDiv = document.getElementById( 'rotate' );
+    this.rotateDiv = document.querySelector('[data-vzid="controls"]');
     new RotatorZoom(
       this.rotateDiv,
       this.model,
@@ -152,8 +181,6 @@ export class ModelLoader {
     // renderer.gammaOutput = true; // for color correction, see https://blender.stackexchange.com/questions/34728/materials-from-blender-to-three-js-colors-seem-to-be-different
     this.container.appendChild( this.renderer.domElement );
 
-    //
-    // document.body.appendChild( ARButton.createButton( renderer, sessionConfig ) );
     this.overlayDiv.style.display = "";
     session.addEventListener( 'end', () => {
       session = null;
@@ -170,11 +197,13 @@ export class ModelLoader {
       });
     }
 
-    document.getElementById('exit').addEventListener('click', () => {
+    // document.getElementById('exit').addEventListener('click', () => {
+    document.querySelector('[data-vzid="exit"]').addEventListener('click', () => {
       this.overlayDiv.style.display = "none";
       session.end();
     });
-    document.getElementById('addToCart').addEventListener('click', () => {
+    // document.getElementById('addToCart').addEventListener('click', () => {
+    this.addCartElement.addEventListener('click', () => {
       this.overlayDiv.style.display = "none";
       session.end();
       window.alert("Added product to cart!")
@@ -209,9 +238,13 @@ export class ModelLoader {
       //   }
       //   );
       // }
+      if (this.positionMessageElement.style.display === 'none') return;
+
       if (!this.modelPositioned) {
         this.modelPositioned = true;
-        document.getElementById('positionMessage').style.display = "none";
+        // document.getElementById('position-message').style.display = "none";
+        this.positionMessageElement.style.display = 'none';
+        this.addCartElement.style.display = '';
       }
     }
 
@@ -402,16 +435,20 @@ export class ModelLoader {
           
           this.model.visible = true;
 
-          document.getElementById('positionMessage').style.display = "";
+          // document.getElementById('positionMessage').style.display = "";
+          this.positionMessageElement.style.display = "";
+          document.querySelector<HTMLElement>('[data-vzid="move-gesture"]').style.display = "none";
 
           // this.addTransformLines(pose.transform);
         } else {
           this.reticle.visible = false;
           this.model.visible = false;
+          this.positionMessageElement.style.display = 'none';
         }
       } else {
         this.reticle.visible = false;
         this.model.visible = false;
+        this.positionMessageElement.style.display = 'none';
       }
     }
 

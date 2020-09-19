@@ -1,17 +1,20 @@
+const baseConfig = require('./webpack.base');
 const path = require('path');
 // var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
+var DefinePlugin = require('webpack').DefinePlugin;
 
 module.exports = {
   entry: {
     // main: './src/index.ts',
+    embed: './src/embed/embed.ts',
     "examples/rotator": './src/examples/rotator.ts',
     "examples/translate": './src/examples/translate.ts',
     "demos/simplyfit/index": './src/demos/simplyfit/index.ts',
     "demos/lampsplus/index": './src/demos/lampsplus/index.ts',
     "demos/gstakis/index": './src/demos/gstakis/index.ts',
   },
-  devtool: 'source-map',
+  devtool: 'inline-source-map',
   module: {
     rules: [
       {
@@ -72,6 +75,10 @@ module.exports = {
           },
         }
       ]
+    }),
+    new DefinePlugin({
+      // 'process.env': JSON.stringify(require('dotenv').config().parsed),
+      'process.env': JSON.stringify(baseConfig.config),
     }),
   ]
 };

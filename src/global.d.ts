@@ -1,5 +1,28 @@
-declare var window: Window;
-declare module "three-dat.gui";
+import { VzConfig } from "./embed/vzconfig";
+
+declare global {
+  interface Window {
+    vz_config: VzConfig;
+    vza_commands: string[];
+    vza: () => void;
+  }
+
+  // namespace NodeJS {
+  //   interface ProcessEnv {
+  //     apiUrl: string;
+  //   }
+  // }
+}
+
+declare namespace NodeJS {
+  // @ts-ignore
+  export interface ProcessEnv {
+    apiUrl: string;
+  }
+}
+
+// declare var window: Window;
+// declare module "three-dat.gui";
 
 declare module dat {
   export interface GUI {

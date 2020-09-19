@@ -1,0 +1,4 @@
+dist
+vue.config.js
+tsconfig.json
+webpack.*.js

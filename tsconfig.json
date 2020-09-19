@@ -2,13 +2,32 @@
   "compilerOptions": {
     "outDir": "./dist/",
     "noImplicitAny": true,
-    "module": "es6",
-    "target": "es5",
-    "jsx": "react",
+    "module": "esnext",
+    "target": "esnext",
     "allowJs": true,
     "sourceMap": true,
     "lib": ["ES2015", "DOM"],
-    "moduleResolution": "node"
+    "moduleResolution": "node",
+    "downlevelIteration": true,
+    "baseUrl": "src"
+    // "types": [ "node" ],
+    // "typeRoots": ["./node_modules/@types"]
   },
-  "include": ["src"]
+  "include": ["src"],
 }
+// {
+//   "compilerOptions": {
+//     "target": "esnext",
+//     "module": "esnext",
+//     "moduleResolution": "node",
+//     "lib": ["esnext", "esnext.asynciterable", "dom"],
+//     "strict": false,
+//     "esModuleInterop": true,
+//     "experimentalDecorators": true,
+//     "allowSyntheticDefaultImports": true,
+//     "allowJs": true,
+//     "sourceMap": true,
+//     "baseUrl": "./src"
+//   },
+//   "exclude": ["node_modules"]
+// }
