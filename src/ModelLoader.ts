@@ -94,22 +94,31 @@ export class ModelLoader {
     // do nothing if AR is not supported
     if (!await this.isARSupported()) return;
 
-    this.loadResource();
-    this.overlayDiv = document.querySelector('[data-vzid="ol"]');
-    // const trigger = window.document.getElementById('ar-trigger');
-    const trigger = document.querySelector<HTMLElement>('[data-vzid="ar-trigger"]');
-    trigger.style.display = '';
-    trigger.addEventListener('click', () => this.initAR());
-
-    if (DEBUG_CONTROLS) {
-      ModelLoader.DatGui = new dat.GUI();
-      this.overlayDiv.append(ModelLoader.DatGui.domElement);
+    try {
+      await this.loadResource();
+    } catch {
+      // error happened, possibly couldn't load resource, no dice
+      return;
     }
-    this.positionMessageElement = document.querySelector<HTMLElement>('[data-vzid="position-message"]');
-    this.positionMessageElement.style.display = 'none';
 
-    this.addCartElement = document.querySelector<HTMLElement>('[data-vzid="add-cart"]');
-    this.addCartElement.style.display = 'none';
+    try {
+      this.overlayDiv = document.querySelector('[data-vzid="ol"]');
+      const trigger = document.querySelector<HTMLElement>('[data-vzid="ar-trigger"]');
+      trigger.style.display = '';
+      trigger.addEventListener('click', () => this.initAR());
+
+      if (DEBUG_CONTROLS) {
+        ModelLoader.DatGui = new dat.GUI();
+        this.overlayDiv.append(ModelLoader.DatGui.domElement);
+      }
+      this.positionMessageElement = document.querySelector<HTMLElement>('[data-vzid="position-message"]');
+      this.positionMessageElement.style.display = 'none';
+
+      this.addCartElement = document.querySelector<HTMLElement>('[data-vzid="add-cart"]');
+      this.addCartElement.style.display = 'none';
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   async isARSupported(): Promise<boolean> {
@@ -277,7 +286,7 @@ export class ModelLoader {
 
   }
 
-  loadResource( ) {
+  loadResource(): Promise<void> {
 
     // var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
     // var material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
@@ -289,7 +298,7 @@ export class ModelLoader {
     return new Promise( ( resolve ) => {
 
       // Instantiate a loader
-      var loader = null;
+      let loader = null;
       switch (this.resource.type) {
         case ModelType.GTLF:
           loader = new GLTFLoader();
@@ -324,9 +333,9 @@ export class ModelLoader {
   }
 
   async loadPNGResource(): Promise<void> {
-    var loader = new THREE.TextureLoader();
+    const loader = new THREE.TextureLoader();
     const texture: THREE.DataTexture = await loader.loadAsync(this.resource.path);
-    var img = new THREE.MeshBasicMaterial({
+    const img = new THREE.MeshBasicMaterial({
       map: texture,
     });
 
