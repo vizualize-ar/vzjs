@@ -129,6 +129,8 @@ class Embed {
 
   async P1_init(): Promise<void> {
     try {
+      if (!await this.isARSupported()) return;
+
       // Get config from window object created from product page
       this.config = window.vz_config;
       const customerApiKey = this.config.apiKey;
@@ -145,6 +147,16 @@ class Embed {
       await this.P1_createModelLoader();
     } catch (e) {
       console.error('VZ embed error', e);
+    }
+  }
+
+  async isARSupported(): Promise<boolean> {
+    // Check to see if the UA can support an AR sessions.
+    try {
+      const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
+      return isSupported;
+    } catch {
+      return false;
     }
   }
 
