@@ -63,6 +63,7 @@ export class ModelLoader {
   private overlayDiv: HTMLElement = null;
   private positionMessageElement: HTMLElement = null;
   private addCartElement: HTMLElement = null;
+  private moveGestureElement: HTMLElement = null
 
   private camera: THREE.PerspectiveCamera = null;
   private scene: THREE.Scene = null;
@@ -105,17 +106,20 @@ export class ModelLoader {
       this.overlayDiv = document.querySelector('[data-vzid="ol"]');
       const trigger = document.querySelector<HTMLElement>('[data-vzid="ar-trigger"]');
       trigger.style.display = '';
-      trigger.addEventListener('click', () => this.initAR());
+      trigger.addEventListener('click', () => {
+        this.positionMessageElement.style.display = 'none';
+        this.addCartElement.style.display = 'none';
+        this.moveGestureElement.style.display = '';
+        this.initAR();
+      });
 
       if (DEBUG_CONTROLS) {
         ModelLoader.DatGui = new dat.GUI();
         this.overlayDiv.append(ModelLoader.DatGui.domElement);
       }
       this.positionMessageElement = document.querySelector<HTMLElement>('[data-vzid="position-message"]');
-      this.positionMessageElement.style.display = 'none';
-
       this.addCartElement = document.querySelector<HTMLElement>('[data-vzid="add-cart"]');
-      this.addCartElement.style.display = 'none';
+      this.moveGestureElement = document.querySelector<HTMLElement>('[data-vzid="move-gesture"]');
     } catch (e) {
       console.error(e);
     }
@@ -213,9 +217,18 @@ export class ModelLoader {
     });
     // document.getElementById('addToCart').addEventListener('click', () => {
     this.addCartElement.addEventListener('click', () => {
+      this.model.visible = false;
       this.overlayDiv.style.display = "none";
+      this.positionMessageElement.style.display = "none";
+      this.addCartElement.style.display = 'none';
+      this.moveGestureElement.style.display = 'none';
       session.end();
-      window.alert("Added product to cart!")
+      
+      // shopify form
+      const productForm = document.querySelector<HTMLFormElement>('[id^=product_form]');
+      if (productForm) {
+        productForm.submit();
+      }
     });
 
     // CONTROLS
@@ -414,7 +427,11 @@ export class ModelLoader {
           this.hitTestSourceRequested = false;
           this.hitTestSource = null;
           this.modelPositioned = false;
-
+          this.model.visible = false;
+          this.overlayDiv.style.display = "none";
+          this.positionMessageElement.style.display = "none";
+          this.addCartElement.style.display = 'none';
+          this.moveGestureElement.style.display = 'none';
         } );
 
         this.hitTestSourceRequested = true;
@@ -446,7 +463,7 @@ export class ModelLoader {
 
           // document.getElementById('positionMessage').style.display = "";
           this.positionMessageElement.style.display = "";
-          document.querySelector<HTMLElement>('[data-vzid="move-gesture"]').style.display = "none";
+          this.moveGestureElement.style.display = "none";
 
           // this.addTransformLines(pose.transform);
         } else {

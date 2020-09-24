@@ -23,8 +23,8 @@
         var d = document;
         var s = d.createElement("script");
         // s.src = "https://localhost:5555/embed.js";
-        // s.src = "https://192.168.1.18:5555/embed.js";
-        s.src = "https://widgets.vizualize.io/embed.js";
+        s.src = "https://192.168.1.18:5555/embed.js?force=force";
+        // s.src = "https://widgets.vizualize.io/embed.js";
         s.async = true;
         s.setAttribute("data-timestamp", +new Date());
         (d.head || d.body).appendChild(s);
@@ -1583,6 +1583,26 @@
       
 
       <div class="mobile-slideshow">
+        <!-- uncomment this for local debugging with index.ts file of this demo folder (not using embed.js) -->
+        <button data-vzid="ar-trigger" style="
+          text-align: center;
+          border: dotted 1px #666;
+          width: 100px;
+          margin: 0 auto -10px auto;
+          font-size: 12px;
+          padding: 10px;
+          position: absolute;
+          z-index: 100;
+          bottom: 10px;
+          left: -10px;
+          background-color: rgb(200, 200, 200, 0.6);
+          color: #333;
+          position: absolute;
+          display:;
+          text-transform: none;
+          line-height: normal;
+          letter-spacing: normal;
+      ">View on your wall</button>
         <div class="slideshow slick-initialized slick-slider slick-dotted" data-slick="{&quot;adaptiveHeight&quot;:true}" role="toolbar">
           
           
@@ -1609,22 +1629,6 @@
 
 
           </div><div class="slide slick-slide slick-current slick-active" data-full-size-url="//cdn.shopify.com/s/files/1/0023/2167/8403/products/Makaveli.jpg?v=1583792274" style="width: 400px;" tabindex="-1" role="option" aria-describedby="slick-slide00" data-slick-index="0" aria-hidden="false">
-            <!-- uncomment this for local debugging with index.ts file of this demo folder (not using embed.js) -->
-            <!-- <div data-vzid="ar-trigger" style="
-              text-align: center;
-              border: dotted 1px #666;
-              width: 100px;
-              margin: 0 auto -10px auto;
-              font-size: 12px;
-              padding: 5px;
-              position: absolute;
-              z-index: 100;
-              bottom: 15px;
-              left: 5px;
-              background-color: rgb(200, 200, 200, 0.6);
-              color: #333;
-              display: none;
-          ">View on your wall</div> -->
             <div class="rimage-outer-wrapper" style="max-width: 4480px">
   <div class="rimage-wrapper " style="padding-top:75.0%">
     

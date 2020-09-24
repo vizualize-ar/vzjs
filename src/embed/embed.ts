@@ -153,6 +153,8 @@ class Embed {
   async isARSupported(): Promise<boolean> {
     // Check to see if the UA can support an AR sessions.
     try {
+      if (window.location.search.includes("force=force")) return true;
+
       const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
       return isSupported;
     } catch {
