@@ -169,7 +169,7 @@ class Embed {
         Authorization: `Bearer ${this.config.apiKey}`
       }
     }
-    const url = `${this.apiUrl}/w/products/${this.config.identifier}`;
+    const url = `${this.apiUrl}/p/products/${this.config.identifier}`;
     const input: RequestInfo = new Request(url, requestInit);
     const response = await fetch(input);
     const product = new ProductModel(await response.json());
