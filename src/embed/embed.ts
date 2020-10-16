@@ -1,7 +1,12 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { VzConfig } from "./vzconfig";
-import { ModelOptions, ModelType, ModelDimension, PlaneDirection, ModelLoader, LoaderOptions } from "../ModelLoader";
-import { ProductModel } from "./product-model";
+import { ModelOptions, ModelType, PlaneDirection, ModelLoader, LoaderOptions } from "../ModelLoader";
+import { Product } from "./product-model";
+import WebXRPolyfill from 'webxr-polyfill';
+import * as checks from './checks';
+import { QuickLookLoader } from "../QuickLookLoader";
+
+const polyfill = new WebXRPolyfill();
 
 // move-gesture svg comes from "movegesture" folder
 const OVERLAY =
@@ -129,22 +134,26 @@ class Embed {
 
   async P1_init(): Promise<void> {
     try {
-      if (!await this.isARSupported()) return;
-
       // Get config from window object created from product page
       this.config = window.vz_config;
-      const customerApiKey = this.config.apiKey;
+      if (!this.config.apiKey || !this.config.identifier) return; // not configured correctly
+      if (await this.isARSupported()) {
+        const customerApiKey = this.config.apiKey;
 
-      if ((customerApiKey || "") == "") {
-        console.error(
-          "Vizualize: Missing API key. Please refer to the documentation for proper usage."
-        );
-        return;
+        if ((customerApiKey || "") == "") {
+          console.error(
+            "Vizualize: Missing API key. Please refer to the documentation for proper usage."
+          );
+          return;
+        }
+
+        // this.createGlobal();
+        if (await this.P1_createModelLoader()) {
+          this.P1_createOverlay();
+        }
+      } else if (checks.IS_AR_QUICKLOOK_CANDIDATE) {
+        this.createQuickLook();
       }
-
-      // this.createGlobal();
-      this.P1_createOverlay();
-      await this.P1_createModelLoader();
     } catch (e) {
       console.error('VZ embed error', e);
     }
@@ -153,32 +162,35 @@ class Embed {
   async isARSupported(): Promise<boolean> {
     // Check to see if the UA can support an AR sessions.
     try {
-      if (window.location.search.includes("force=force")) return true;
-
       const isSupported = await navigator.xr.isSessionSupported('immersive-ar');
-      return isSupported;
+      return isSupported && await checks.IS_WEBXR_AR_CANDIDATE;
     } catch {
       return false;
     }
   }
 
-  async P1_createModelLoader(): Promise<void> {
+  async createQuickLook(): Promise<boolean> {
+    console.log('creating quicklook')
+    const product = await this.loadProduct();
+    if (!product) return false;
+
+    const loader = new QuickLookLoader();
+    loader.load(product); 
+  }
+
+  async P1_createModelLoader(): Promise<boolean> {
     // fetch data from API
-    const requestInit: RequestInit = {
-      headers: {
-        Authorization: `Bearer ${this.config.apiKey}`
-      }
-    }
-    const url = `${this.apiUrl}/p/products/${this.config.identifier}`;
-    const input: RequestInfo = new Request(url, requestInit);
-    const response = await fetch(input);
-    const product = new ProductModel(await response.json());
+    const product = await this.loadProduct();
+    if (!product) return false;
+
+    const model = product.model_direction === PlaneDirection.vertical
+      ? product.models.find(x => x.model_type === ModelType.png)
+      : product.models.find(x => x.model_type !== ModelType.png);
 
     // for now, test with
     const modelOptions = new ModelOptions(
-      product.resource_url,
-      ModelType.PNG,
-      ModelDimension.three_d,
+      model.fullpath,
+      model.model_type,
       15,
       PlaneDirection.vertical,
       product.aspect_ratio,
@@ -189,6 +201,21 @@ class Embed {
       modelOptions,
       new LoaderOptions(false, true, true),
     );
+    return true;
+  }
+
+  async loadProduct(): Promise<Product> {
+    const requestInit: RequestInit = {
+      headers: {
+        Authorization: `Bearer ${this.config.apiKey}`
+      }
+    }
+    const url = `${this.apiUrl}/p/products/${this.config.identifier}`;
+    console.log('loading product', url)
+    const input: RequestInfo = new Request(url, requestInit);
+    const response = await fetch(input);
+    const product = new Product(await response.json());
+    return product;
   }
 
   P1_createOverlay() {

@@ -1,19 +1,15 @@
 import * as THREE from "three";
 import Rotator3D from "./Rotator3D";
 import Zoomer from "./Zoomer";
-import { ModelDimension, ModelLoader, PlaneDirection } from "./ModelLoader";
+import { PlaneDirection } from "./ModelLoader";
 import { Rotator } from "./Rotator";
-import { Util } from "./Util";
-import { Object3D } from "three";
 import Panner from "./Panner";
-import { Rotator2D } from "./Rotator2D";
 
 export class RotatorZoomOptions {
   constructor(
     public zoom: boolean,
     public rotate: boolean,
     public pan: boolean,
-    public dimension: ModelDimension,
     /** Maximum rotation amount, 1-180 */
     public maxRotationDegrees: number,
     public planeDirection: PlaneDirection
@@ -44,8 +40,8 @@ export class RotatorZoom {
   actionBuffer = 100;
   /** Time the last move ended (in epoch time) */
   lastActionEnd: number;
-  isZooming: boolean = false;
-  isRotating: boolean = false;
+  isZooming = false;
+  isRotating = false;
 
   // /** Primary touch events, for rotating or start of pinch/pan */
   // touch1Events: PointerEvent[] = [];

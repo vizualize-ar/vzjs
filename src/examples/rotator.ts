@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RotatorZoom, RotatorZoomOptions } from "../RotatorZoom";
-import { ModelDimension, PlaneDirection } from "../ModelLoader";
+import {PlaneDirection } from "../ModelLoader";
 
 let renderer: THREE.Renderer;
 
@@ -17,7 +17,7 @@ const camera = createCamera();
 addLight();
 const obj = addCube();
 // const obj = addCylinder();
-new RotatorZoom(container, obj, new RotatorZoomOptions(true, true, true, ModelDimension.three_d, 180, PlaneDirection.horizontal));
+new RotatorZoom(container, obj, new RotatorZoomOptions(true, true, true, 180, PlaneDirection.horizontal));
 addRenderer();
 animate();
 
@@ -81,17 +81,17 @@ function createCamera() {
 }
 
 function addLight() {
-  var directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
+  const directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
   scene.add( directionalLight );
 }
 
 function addCube() {
-  var boxGeometry = new THREE.BoxGeometry(100, 100, 100);
+  const boxGeometry = new THREE.BoxGeometry(100, 100, 100);
 
-  for (var i = 0; i < boxGeometry.faces.length; i += 2)
+  for (let i = 0; i < boxGeometry.faces.length; i += 2)
   {
 
-    var color = {
+    const color = {
       h: (1 / (boxGeometry.faces.length)) * i,
       s: 0.5,
       l: 0.5
@@ -102,7 +102,7 @@ function addCube() {
 
   }
 
-  var cubeMaterial = new THREE.MeshBasicMaterial(
+  const cubeMaterial = new THREE.MeshBasicMaterial(
   {
     vertexColors: true
   });
@@ -115,9 +115,9 @@ function addCube() {
 }
 
 function addCylinder() {
-  var geometry = new THREE.CylinderBufferGeometry( 70, 70, 150, 32 );//.translate( 0, 0.1, 0 );
-  var material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
-  var obj = new THREE.Mesh( geometry, material );
+  const geometry = new THREE.CylinderBufferGeometry( 70, 70, 150, 32 );//.translate( 0, 0.1, 0 );
+  const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
+  const obj = new THREE.Mesh( geometry, material );
   obj.position.y = 150;
   scene.add(obj);
   

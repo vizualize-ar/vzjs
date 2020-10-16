@@ -3,17 +3,17 @@ import * as THREE from "three";
 import { RotatorZoom, RotatorZoomOptions } from "../../../RotatorZoom";
 // import { ARButton } from './jsm/webxr/ARButton.js';
 import { GLTFLoader } from '../../../jsm/loaders/GLTFLoader.js';
-import { ModelDimension, PlaneDirection } from "../../../ModelLoader";
+import { PlaneDirection } from "../../../ModelLoader";
 // import { RotatorZoom } from './rotator.js';
 
-var container, rotateDiv;
-var camera: any, scene: any, renderer: any;
-var controller;
+let container, rotateDiv;
+let camera: any, scene: any, renderer: any;
+let controller;
 
-var reticle: any, model: any;
+let reticle: any, model: any;
 
-var hitTestSource: any = null;
-var hitTestSourceRequested = false;
+let hitTestSource: any = null;
+let hitTestSourceRequested = false;
 
 // var control;
 
@@ -41,7 +41,7 @@ function init(session: any) {
   document.body.appendChild( container );
 
   rotateDiv = document.getElementById( 'rotate' );
-  new RotatorZoom(rotateDiv, model.scene, new RotatorZoomOptions(true, true, true, ModelDimension.three_d, 180, PlaneDirection.horizontal));
+  new RotatorZoom(rotateDiv, model.scene, new RotatorZoomOptions(true, true, true, 180, PlaneDirection.horizontal));
 
   scene = new THREE.Scene();
   camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
@@ -50,7 +50,7 @@ function init(session: any) {
   // // light.position.set( 0.5, 1, 0.25 );
   // scene.add( light );
 
-  var directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
+  const directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
   // directionalLight.castShadow = true;
   // directionalLight.shadowCameraVisible = true;
   // directionalLight.shadowDarkness = 0.9;
@@ -96,7 +96,7 @@ function init(session: any) {
 
   //
 
-  var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
+  const geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
 
   function onSelect() {
 
@@ -159,7 +159,7 @@ function loadResource( ) {
   return new Promise( ( resolve ) => {
 
     // Instantiate a loader
-    var loader = new GLTFLoader();
+    const loader = new GLTFLoader();
     // Load a glTF resource
     loader.load(
       // resource URL
@@ -227,8 +227,8 @@ function render( timestamp: any, frame: any ) {
 
   if ( frame ) {
 
-    var referenceSpace = renderer.xr.getReferenceSpace();
-    var session = renderer.xr.getSession();
+    const referenceSpace = renderer.xr.getReferenceSpace();
+    const session = renderer.xr.getSession();
 
     if (hitTestSourceRequested === false) {
 
@@ -256,11 +256,11 @@ function render( timestamp: any, frame: any ) {
 
     if (hitTestSource && !model.positioned) {
 
-      var hitTestResults = frame.getHitTestResults( hitTestSource );
+      const hitTestResults = frame.getHitTestResults( hitTestSource );
 
       if ( hitTestResults.length ) {
 
-        var hit = hitTestResults[ 0 ];
+        const hit = hitTestResults[ 0 ];
         const pose = hit.getPose( referenceSpace );
         const hitMatrix = pose.transform.matrix;
         

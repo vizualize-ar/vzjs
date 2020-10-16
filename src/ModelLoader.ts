@@ -11,16 +11,10 @@ import * as dat from "dat.gui";
 // init(dat); // Init three-dat.gui with Dat
 
 export enum ModelType {
-  GTLF = "GTLF",
-  FBX = "FBX",
-  PNG = "PNG",
-}
-
-export enum ModelDimension {
-  /** 3 dimensional asset */
-  three_d = "three_d",
-  /** 2 dimensional asset */
-  two_d = "two_d"
+  gltf = "gltf",
+  fbx = "fbx",
+  png = "png",
+  usd = "usd",
 }
 
 export enum PlaneDirection {
@@ -42,7 +36,6 @@ export class ModelOptions {
   constructor(
     public path: string,
     public type: ModelType,
-    public dimension = ModelDimension.three_d,
     public maxRotationDegrees = 180,
     public planeDirection: PlaneDirection = PlaneDirection.horizontal,
     public aspectRatio?: number,
@@ -165,7 +158,6 @@ export class ModelLoader {
         this.loaderOptions.zoom,
         this.loaderOptions.rotate,
         this.loaderOptions.pan,
-        this.resource.dimension,
         this.resource.maxRotationDegrees,
         this.resource.planeDirection
       ),
@@ -178,7 +170,7 @@ export class ModelLoader {
     // // light.position.set( 0.5, 1, 0.25 );
     // scene.add( light );
 
-    var directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
+    const directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
     // directionalLight.castShadow = true;
     // directionalLight.shadowCameraVisible = true;
     // directionalLight.shadowDarkness = 0.9;
@@ -239,10 +231,7 @@ export class ModelLoader {
     // control.addEventListener( 'change', render );
     // control.setMode( "rotate" );
 
-
-    //
-
-    var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
+    // var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
 
     const onSelect = () => {
 
@@ -313,13 +302,13 @@ export class ModelLoader {
       // Instantiate a loader
       let loader = null;
       switch (this.resource.type) {
-        case ModelType.GTLF:
+        case ModelType.gltf:
           loader = new GLTFLoader();
           break;
-        case ModelType.FBX:
+        case ModelType.fbx:
           loader = new FBXLoader();
           break;
-        case ModelType.PNG:
+        case ModelType.png:
           return this.loadPNGResource().then(resolve);
       }
 
@@ -397,12 +386,12 @@ export class ModelLoader {
   render (timestamp: any, frame: XRFrame): any {
 
     if (REAL_WORLD_GEOMETRY && frame) {
-      let detectedPlanes = frame.worldInformation.detectedPlanes;
+      const detectedPlanes = frame.worldInformation.detectedPlanes;
       if (detectedPlanes.size > 0) {
-        var referenceSpace = this.renderer.xr.getReferenceSpace();
+        const referenceSpace = this.renderer.xr.getReferenceSpace();
         detectedPlanes.forEach((plane: any) => {
-            let planePose = frame.getPose(plane.planeSpace, referenceSpace);
-            let planeVertices = plane.polygon; // plane.polygon is an array of objects containing x,y,z coordinates
+            const planePose = frame.getPose(plane.planeSpace, referenceSpace);
+            const planeVertices = plane.polygon; // plane.polygon is an array of objects containing x,y,z coordinates
         
             // ...draw plane_vertices relative to plane_pose...
             this.drawPlane(planePose, planeVertices);
@@ -412,8 +401,8 @@ export class ModelLoader {
 
     if (frame && !this.modelPositioned) {
 
-      var referenceSpace = this.renderer.xr.getReferenceSpace();
-      var session = this.renderer.xr.getSession();
+      const referenceSpace = this.renderer.xr.getReferenceSpace();
+      const session = this.renderer.xr.getSession();
 
       if (this.hitTestSourceRequested === false) {
         session.requestReferenceSpace( 'viewer' ).then((referenceSpace: any) => {
@@ -440,11 +429,11 @@ export class ModelLoader {
 
       if (this.hitTestSource) {
 
-        var hitTestResults = frame.getHitTestResults( this.hitTestSource );
+        const hitTestResults = frame.getHitTestResults( this.hitTestSource );
 
         if ( hitTestResults.length ) {
 
-          var hit = hitTestResults[ 0 ];
+          const hit = hitTestResults[ 0 ];
           const pose = hit.getPose( referenceSpace );
           const hitMatrix = pose.transform.matrix;
 
@@ -497,10 +486,10 @@ export class ModelLoader {
   rzLine: THREE.Line;
 
   addModelLines() {
-    // var linegeometry = new THREE.Geometry();
+    // const linegeometry = new THREE.Geometry();
     // // linegeometry.vertices.push( new THREE.Vector3(0, 0, 0), this.model.position );
     // linegeometry.vertices.push( this.camera.position, this.model.position ); // draws line from origin to model
-    // var line = new THREE.Line( linegeometry, new THREE.LineBasicMaterial( {
+    // const line = new THREE.Line( linegeometry, new THREE.LineBasicMaterial( {
     //     color: 0x33eeef,
     // } ) );
     // this.scene.add( line );
@@ -509,7 +498,7 @@ export class ModelLoader {
     if (this.xLine) {
       this.scene.remove(this.xLine);
     }
-    var xGeometry = new THREE.Geometry();
+    const xGeometry = new THREE.Geometry();
     xGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x + 0.5, this.model.position.y, this.model.position.z) );
     this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
         color: "red",
@@ -520,7 +509,7 @@ export class ModelLoader {
     if (this.yLine) {
       this.scene.remove(this.yLine);
     }
-    var yGeometry = new THREE.Geometry();
+    const yGeometry = new THREE.Geometry();
     yGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y + 0.5, this.model.position.z) );
     this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
         color: "green",
@@ -531,7 +520,7 @@ export class ModelLoader {
     if (this.zLine) {
       this.scene.remove(this.zLine);
     }
-    var zGeometry = new THREE.Geometry();
+    let zGeometry = new THREE.Geometry();
     zGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y, this.model.position.z + 0.5) );
     this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
         color: "blue",
@@ -542,8 +531,8 @@ export class ModelLoader {
     if (this.rxLine) {
       this.scene.remove(this.rxLine);
     }
-    var zGeometry = new THREE.Geometry();
-    var rotation = this.model.rotation.toVector3();
+    zGeometry = new THREE.Geometry();
+    const rotation = this.model.rotation.toVector3();
     zGeometry.vertices.push( rotation, new THREE.Vector3(rotation.x + 0.5, rotation.y, rotation.z) );
     this.rxLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
         color: "yellow",
@@ -560,13 +549,13 @@ export class ModelLoader {
     // } ) );
     // this.scene.add( line );
 
-    var startVector = new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z);
+    const startVector = new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z);
 
     // draw model x axis
     if (this.xLine) {
       this.scene.remove(this.xLine);
     }
-    var xGeometry = new THREE.Geometry();
+    const xGeometry = new THREE.Geometry();
     xGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x + 0.5, transform.position.y, transform.position.z) );
     this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
         color: 0xff6666,
@@ -577,7 +566,7 @@ export class ModelLoader {
     if (this.yLine) {
       this.scene.remove(this.yLine);
     }
-    var yGeometry = new THREE.Geometry();
+    const yGeometry = new THREE.Geometry();
     yGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y + 0.5, transform.position.z) );
     this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
         color: 0x66ff66,
@@ -588,7 +577,7 @@ export class ModelLoader {
     if (this.zLine) {
       this.scene.remove(this.zLine);
     }
-    var zGeometry = new THREE.Geometry();
+    const zGeometry = new THREE.Geometry();
     zGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z + 0.5) );
     this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
         color: 0x6666ff,
@@ -623,12 +612,12 @@ export class ModelLoader {
 
   drawPlane(pose: any, vertices: any) {
     // geometry
-    var geometry = new THREE.BufferGeometry();
+    const geometry = new THREE.BufferGeometry();
 
     // attributes
-    var positions = new Float32Array( REAL_WORLD_GEOMETRY_MAX_POINTS * 3 ); // 3 vertices per point
-    var index = 0;
-    for ( var i = 0; i < vertices.length;  i ++ ) {
+    const positions = new Float32Array( REAL_WORLD_GEOMETRY_MAX_POINTS * 3 ); // 3 vertices per point
+    let index = 0;
+    for ( let i = 0; i < vertices.length;  i ++ ) {
         positions[ index ++ ] = vertices[i].x;
         positions[ index ++ ] = vertices[i].y;
         positions[ index ++ ] = vertices[i].z;
@@ -639,7 +628,7 @@ export class ModelLoader {
     geometry.setDrawRange( 0, vertices.length );
 
     // material
-    var material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 2 } );
+    const material = new THREE.LineBasicMaterial( { color: 0xff0000, linewidth: 2 } );
 
     // line
     const line = new THREE.Line( geometry,  material );
