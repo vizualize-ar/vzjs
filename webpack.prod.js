@@ -13,22 +13,25 @@ module.exports = {
     minimize: true,
     minimizer: [
       new TerserJSPlugin({
-        // terserOptions: { 
+        terserOptions: { 
         //   mangle: {
         //     properties: {
         //       // see https://stackoverflow.com/questions/58835084/webpackterserplugin-mangle-ignores-properties-and-class-names-poor-quality-o
         //       regex: /(^P1|^p1|^_p1)_\w*/
         //     },
         //   },
-        // },
+          compress: {
+            drop_console: true,
+          },
+        },
       }),
       new OptimizeCSSAssetsPlugin({})],
   },
   entry: {
     embed: './src/embed/embed.ts',
-    "demos/simplyfit/index": './src/demos/simplyfit/index.ts',
-    "demos/lampsplus/index": './src/demos/lampsplus/index.ts',
-    "demos/gstakis/index": './src/demos/gstakis/index.ts',
+    // "demos/simplyfit/index": './src/demos/simplyfit/index.ts',
+    // "demos/lampsplus/index": './src/demos/lampsplus/index.ts',
+    // "demos/gstakis/index": './src/demos/gstakis/index.ts',
   },
   // devtool: 'source-map',
   module: {
@@ -70,19 +73,19 @@ module.exports = {
     path: path.resolve(__dirname, 'dist'),
   },
   plugins: [
-    new CopyWebpackPlugin({
-      patterns: [
-        {
-          from: './src/demos/**/*',
-          transformPath(targetPath, absolutePath) {
-            return targetPath.replace("src\\", "");
-          },
-          globOptions: {
-            ignore: ['**/*.ts'],
-          },
-        }
-      ]
-    }),
+    // new CopyWebpackPlugin({
+    //   patterns: [
+    //     {
+    //       from: './src/demos/**/*',
+    //       transformPath(targetPath, absolutePath) {
+    //         return targetPath.replace("src\\", "");
+    //       },
+    //       globOptions: {
+    //         ignore: ['**/*.ts'],
+    //       },
+    //     }
+    //   ]
+    // }),
     new DefinePlugin({
       // 'process.env': JSON.stringify(require('dotenv').config().parsed),
       'process.env': JSON.stringify(baseConfig.config),
