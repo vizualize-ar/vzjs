@@ -3,7 +3,7 @@ import * as THREE from "three";
 import { RotatorZoom, RotatorZoomOptions } from "../../../RotatorZoom";
 // import { ARButton } from './jsm/webxr/ARButton.js';
 import { GLTFLoader } from '../../../jsm/loaders/GLTFLoader.js';
-import { PlaneDirection } from "../../../ModelLoader";
+import { PlaneDirection } from "../../../lib/plane-direction";
 // import { RotatorZoom } from './rotator.js';
 
 let container, rotateDiv;

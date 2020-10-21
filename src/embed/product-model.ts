@@ -1,4 +1,5 @@
-import { ModelType, PlaneDirection } from "../ModelLoader";
+import { ModelType } from "../lib/model-type";
+import { PlaneDirection } from "../lib/plane-direction";
 
 /** Inch to meter conversion factor */
 const METER_FACTOR = 0.0254;

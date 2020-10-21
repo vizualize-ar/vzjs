@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { Rotator } from "./Rotator";
-import { PlaneDirection } from "./ModelLoader";
+import { PlaneDirection } from "./lib/plane-direction";
 
 export default class Rotator3D implements Rotator {
   public static IsDefaultQuaternion(quaternion: THREE.Quaternion) {

@@ -4,25 +4,12 @@ import { RotatorZoom, RotatorZoomOptions } from "./RotatorZoom";
 // import { ARButton } from './jsm/webxr/ARButton.js';
 import { GLTFLoader } from './jsm/loaders/GLTFLoader';
 import { FBXLoader } from "./jsm/loaders/FBXLoader";
-// import { RotatorZoom } from './rotator.js';
+import { ModelType } from "./lib/model-type";
+import { PlaneDirection } from "./lib/plane-direction";
 
 import * as dat from "dat.gui";
 // import init from "three-dat.gui"; // Import initialization method
 // init(dat); // Init three-dat.gui with Dat
-
-export enum ModelType {
-  gltf = "gltf",
-  fbx = "fbx",
-  png = "png",
-  usd = "usd",
-}
-
-export enum PlaneDirection {
-  /** Model should be placed on a horizontal plane (eg, table). */
-  horizontal = "horizontal",
-  /** Model should be placed on a vertical plan (eg, wall). */
-  vertical = "vertical",
-}
 
 export class LoaderOptions {
   constructor(
@@ -97,13 +84,15 @@ export class ModelLoader {
 
     try {
       this.overlayDiv = document.querySelector('[data-vzid="ol"]');
-      const trigger = document.querySelector<HTMLElement>('[data-vzid="ar-trigger"]');
-      trigger.style.display = '';
-      trigger.addEventListener('click', () => {
-        this.positionMessageElement.style.display = 'none';
-        this.addCartElement.style.display = 'none';
-        this.moveGestureElement.style.display = '';
-        this.initAR();
+      const triggers = document.querySelectorAll<HTMLElement>('[data-vzid="ar-trigger"]');
+      triggers.forEach((trigger) => {
+        trigger.style.display = '';
+        trigger.addEventListener('click', () => {
+          this.positionMessageElement.style.display = 'none';
+          this.addCartElement.style.display = 'none';
+          this.moveGestureElement.style.display = '';
+          this.initAR();
+        });
       });
 
       if (DEBUG_CONTROLS) {
@@ -308,7 +297,7 @@ export class ModelLoader {
         case ModelType.fbx:
           loader = new FBXLoader();
           break;
-        case ModelType.png:
+        case ModelType.image:
           return this.loadPNGResource().then(resolve);
       }
 

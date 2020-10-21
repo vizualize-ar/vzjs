@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { RotatorZoom, RotatorZoomOptions } from "../RotatorZoom";
-import {PlaneDirection } from "../ModelLoader";
+import { PlaneDirection } from "../lib/plane-direction";
 
 let renderer: THREE.Renderer;
 

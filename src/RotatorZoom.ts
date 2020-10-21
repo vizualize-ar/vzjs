@@ -1,7 +1,7 @@
 import * as THREE from "three";
 import Rotator3D from "./Rotator3D";
 import Zoomer from "./Zoomer";
-import { PlaneDirection } from "./ModelLoader";
+import { PlaneDirection } from "./lib/plane-direction";
 import { Rotator } from "./Rotator";
 import Panner from "./Panner";
 

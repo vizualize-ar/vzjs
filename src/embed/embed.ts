@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-var-requires */
 import { VzConfig } from "./vzconfig";
-import { ModelOptions, ModelType, PlaneDirection, ModelLoader, LoaderOptions } from "../ModelLoader";
+import { ModelType } from "../lib/model-type";
+import { PlaneDirection } from "../lib/plane-direction";
+import { ModelOptions, ModelLoader, LoaderOptions } from "../ModelLoader";
 import { Product } from "./product-model";
-import WebXRPolyfill from 'webxr-polyfill';
+// import WebXRPolyfill from 'webxr-polyfill';
 import * as checks from './checks';
 import { QuickLookLoader } from "../QuickLookLoader";
 
-const polyfill = new WebXRPolyfill();
+// const polyfill = new WebXRPolyfill();
 
 // move-gesture svg comes from "movegesture" folder
 const OVERLAY =
@@ -134,6 +136,7 @@ class Embed {
 
   async P1_init(): Promise<void> {
     try {
+      this.logDebugInfo();
       // Get config from window object created from product page
       this.config = window.vz_config;
       if (!this.config.apiKey || !this.config.identifier) return; // not configured correctly
@@ -184,8 +187,8 @@ class Embed {
     if (!product) return false;
 
     const model = product.model_direction === PlaneDirection.vertical
-      ? product.models.find(x => x.model_type === ModelType.png)
-      : product.models.find(x => x.model_type !== ModelType.png);
+      ? product.models.find(x => x.model_type === ModelType.image)
+      : product.models.find(x => x.model_type !== ModelType.image);
 
     // for now, test with
     const modelOptions = new ModelOptions(
@@ -205,17 +208,22 @@ class Embed {
   }
 
   async loadProduct(): Promise<Product> {
-    const requestInit: RequestInit = {
-      headers: {
-        Authorization: `Bearer ${this.config.apiKey}`
+    try {
+      const requestInit: RequestInit = {
+        headers: {
+          Authorization: `Bearer ${this.config.apiKey}`
+        }
       }
+      const url = `${this.apiUrl}/p/products/${this.config.identifier}`;
+      console.log('loading product', url)
+      const input: RequestInfo = new Request(url, requestInit);
+      const response = await fetch(input);
+      const product = new Product(await response.json());
+      return product;
+    } catch (e) {
+      console.error('Unable to load product', e);
+      return null;
     }
-    const url = `${this.apiUrl}/p/products/${this.config.identifier}`;
-    console.log('loading product', url)
-    const input: RequestInfo = new Request(url, requestInit);
-    const response = await fetch(input);
-    const product = new Product(await response.json());
-    return product;
   }
 
   P1_createOverlay() {
@@ -254,6 +262,13 @@ class Embed {
         handle = setInterval(drainQueue, 100);
       }
     }
+  }
+
+  async logDebugInfo() {
+    const isQuickLook = checks.IS_AR_QUICKLOOK_CANDIDATE;
+    const isARSupported = await this.isARSupported();
+    const hasConfig = window.vz_config && !!window.vz_config.apiKey && !!window.vz_config.identifier;
+    console.log("vzdbg", hasConfig, isQuickLook, isARSupported);
   }
 }
 
