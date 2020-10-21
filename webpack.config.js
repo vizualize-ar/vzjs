@@ -10,6 +10,7 @@ module.exports = {
     embed: './src/embed/embed.ts',
     "examples/rotator": './src/examples/rotator.ts',
     "examples/translate": './src/examples/translate.ts',
+    "examples/gltfexport": './src/examples/gltfexport.ts',
     "demos/simplyfit/index": './src/demos/simplyfit/index.ts',
     "demos/lampsplus/index": './src/demos/lampsplus/index.ts',
     "demos/gstakis/index": './src/demos/gstakis/index.ts',
@@ -29,7 +30,7 @@ module.exports = {
     ],
   },
   resolve: {
-    extensions: [ '.tsx', '.ts', '.js' ],
+    extensions: ['.ts', '.js'],
   },
   output: {
     filename: '[name].js',
@@ -73,7 +74,12 @@ module.exports = {
           globOptions: {
             ignore: ['**/*.ts'],
           },
-        }
+        },
+        // Not currently being used
+        // {
+        //   from: './src/embed/qlbanner.html',
+        //   to: 'embed'
+        // }
       ]
     }),
     new DefinePlugin({
