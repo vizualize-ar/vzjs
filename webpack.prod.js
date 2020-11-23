@@ -4,6 +4,7 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const OptimizeCSSAssetsPlugin = require('optimize-css-assets-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var DefinePlugin = require('webpack').DefinePlugin;
+var NormalModuleReplacementPlugin = require('webpack').NormalModuleReplacementPlugin;
 const path = require('path');
 const baseConfig = require("./webpack.base");
 
@@ -93,6 +94,8 @@ module.exports = {
     new JavaScriptObfuscator ({
       identifierNamesGenerator: 'mangled',
       optionsPreset: 'low-obfuscation'
-    })
+    }),
+    // This replaces imports with the fake module
+    new NormalModuleReplacementPlugin(/^dat\.gui$/, './fakes/dat.gui.js')
   ]
 };

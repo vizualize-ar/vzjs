@@ -3,6 +3,7 @@ const path = require('path');
 // var HtmlWebpackPlugin = require('html-webpack-plugin');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var DefinePlugin = require('webpack').DefinePlugin;
+var NormalModuleReplacementPlugin = require('webpack').NormalModuleReplacementPlugin;
 
 module.exports = {
   entry: {
@@ -14,6 +15,8 @@ module.exports = {
     "demos/simplyfit/index": './src/demos/simplyfit/index.ts',
     "demos/lampsplus/index": './src/demos/lampsplus/index.ts',
     "demos/gstakis/index": './src/demos/gstakis/index.ts',
+    "demos/homedepot/index": './src/demos/homedepot/index.ts',
+    "demos/testbed/index": './src/demos/testbed/index.ts',
   },
   devtool: 'inline-source-map',
   module: {
@@ -86,5 +89,6 @@ module.exports = {
       // 'process.env': JSON.stringify(require('dotenv').config().parsed),
       'process.env': JSON.stringify(baseConfig.config),
     }),
+    new NormalModuleReplacementPlugin(/^dat\.gui$/, './fakes/dat.gui.js')
   ]
 };
