@@ -23,12 +23,13 @@ animate();
 // new RotatorZoom(container, obj, new RotatorZoomOptions(false, false, true));
 const hammer: HammerManager = new Hammer(container);
 
-hammer.on('pan', function(ev) {
-  console.log('panning', ev);
-  const pos = screenToWorld(ev.deltaX, ev.deltaY, camera);
-  obj.translateX(ev.deltaX);
-  obj.translateY(ev.deltaY);
-});
+// 2/08/2021 - commented out due to breaking changes in three.js upgrade.
+// hammer.on('pan', function(ev) {
+//   console.log('panning', ev);
+//   const pos = screenToWorld(ev.deltaX, ev.deltaY, camera);
+//   obj.translateX(ev.deltaX);
+//   obj.translateY(ev.deltaY);
+// });
 
 function screenToWorld(screenX: number, screenY: number, camera: THREE.Camera)
 {
@@ -45,7 +46,7 @@ function screenToWorld(screenX: number, screenY: number, camera: THREE.Camera)
     dir.copy( pos ).sub( camera.position ).normalize();
 
     // Project onto z=0
-    let flDistance = -camera.position.z / dir.z;
+    const flDistance = -camera.position.z / dir.z;
     const newPosition = new THREE.Vector3();
     newPosition.copy( camera.position ).add( dir.multiplyScalar( flDistance ) );
     return newPosition;
@@ -111,43 +112,44 @@ function createCamera() {
 }
 
 function addLight() {
-  var directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
+  const directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
   scene.add( directionalLight );
 }
 
 function addCube() {
-  var boxGeometry = new THREE.BoxGeometry(100, 100, 100);
+  // 2/08/2021 - commented out due to breaking changes in three.js upgrade.
+  // var boxGeometry = new THREE.BoxGeometry(100, 100, 100);
 
-  for (var i = 0; i < boxGeometry.faces.length; i += 2)
-  {
+  // for (var i = 0; i < boxGeometry.faces.length; i += 2)
+  // {
 
-    var color = {
-      h: (1 / (boxGeometry.faces.length)) * i,
-      s: 0.5,
-      l: 0.5
-    };
+  //   var color = {
+  //     h: (1 / (boxGeometry.faces.length)) * i,
+  //     s: 0.5,
+  //     l: 0.5
+  //   };
 
-    boxGeometry.faces[i].color.setHSL(color.h, color.s, color.l);
-    boxGeometry.faces[i + 1].color.setHSL(color.h, color.s, color.l);
+  //   boxGeometry.faces[i].color.setHSL(color.h, color.s, color.l);
+  //   boxGeometry.faces[i + 1].color.setHSL(color.h, color.s, color.l);
 
-  }
+  // }
 
-  var cubeMaterial = new THREE.MeshBasicMaterial(
-  {
-    vertexColors: true
-  });
+  // var cubeMaterial = new THREE.MeshBasicMaterial(
+  // {
+  //   vertexColors: true
+  // });
 
-  const obj = new THREE.Mesh(boxGeometry, cubeMaterial);
-  obj.position.y = 150;
-  scene.add(obj);
+  // const obj = new THREE.Mesh(boxGeometry, cubeMaterial);
+  // obj.position.y = 150;
+  // scene.add(obj);
 
-  return obj;
+  // return obj;
 }
 
 function addCylinder() {
-  var geometry = new THREE.CylinderBufferGeometry( 70, 70, 150, 32 );//.translate( 0, 0.1, 0 );
-  var material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
-  var obj = new THREE.Mesh( geometry, material );
+  const geometry = new THREE.CylinderBufferGeometry( 70, 70, 150, 32 );//.translate( 0, 0.1, 0 );
+  const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
+  const obj = new THREE.Mesh( geometry, material );
   obj.position.y = 150;
   scene.add(obj);
   

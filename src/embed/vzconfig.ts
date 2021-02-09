@@ -1,4 +1,4 @@
 export interface VzConfig {
-  apiKey: string;
+  api_key: string;
   identifier: string;
 }

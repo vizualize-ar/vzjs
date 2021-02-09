@@ -10,6 +10,10 @@ import { PlaneDirection } from "./lib/plane-direction";
 import * as dat from "dat.gui";
 // import init from "three-dat.gui"; // Import initialization method
 // init(dat); // Init three-dat.gui with Dat
+const REAL_WORLD_GEOMETRY = false;
+const REAL_WORLD_GEOMETRY_MAX_POINTS = 500;
+const DEBUG_CONTROLS = false;
+const DEBUG_INSPECTOR = true;
 
 export class LoaderOptions {
   constructor(
@@ -32,10 +36,6 @@ export class ModelOptions {
     public height?: number,
   ) {}
 }
-
-const REAL_WORLD_GEOMETRY = false;
-const REAL_WORLD_GEOMETRY_MAX_POINTS = 500;
-const DEBUG_CONTROLS = false;
 
 export class ModelLoader {
   private container: HTMLElement = null;
@@ -153,24 +153,58 @@ export class ModelLoader {
     );
 
     this.scene = new THREE.Scene();
+    if (DEBUG_INSPECTOR) {
+      (window as any).scene = this.scene;
+      (window as any).THREE = THREE;
+    }
+
     this.camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
 
-    // var light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
-    // // light.position.set( 0.5, 1, 0.25 );
-    // scene.add( light );
+    // const light = new THREE.HemisphereLight(0xffffff, 0x000000, 1);
+    // light.position.set(0, 3, 1);
+    // this.scene.add( light );
 
-    const directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
-    // directionalLight.castShadow = true;
-    // directionalLight.shadowCameraVisible = true;
-    // directionalLight.shadowDarkness = 0.9;
-    this.scene.add( directionalLight );
+    // const directionalLight = new THREE.DirectionalLight( 0xffffff, .6 );
+    // // directionalLight.castShadow = true;
+    // // directionalLight.shadowCameraVisible = true;
+    // // directionalLight.shadowDarkness = 0.9;
+    // this.scene.add( directionalLight );
+
+    const hemisphereLight = new THREE.HemisphereLight(0xffffff, 0xbfbfbf, 2);
+    this.scene.add(hemisphereLight);
+
+    const light1 = new THREE.DirectionalLight(0xffffff);
+    light1.position.set(1, 1, 1);
+    this.scene.add(light1);
+
+    const light2 = new THREE.DirectionalLight(0x002288);
+    light2.position.set(-1, -1, -1);
+    this.scene.add(light2);
+
+    // const light3 = new THREE.AmbientLight(0x222222);
+    const light3 = new THREE.AmbientLight(0xffffff);
+    this.scene.add(light3);
+
+    const pointLight = new THREE.PointLight(
+      0xffffff, // color
+      7.0, // intensity
+      20, // distance
+      2 // decay
+    );
+    pointLight.position.set(1.5, 1.5, 0);
+    this.scene.add(pointLight);
 
     //
 
-    this.renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );
+    // 11/23 - disabled alpha
+    this.renderer = new THREE.WebGLRenderer( { antialias: true } );
     this.renderer.setPixelRatio( window.devicePixelRatio );
     this.renderer.setSize( window.innerWidth, window.innerHeight );
     this.renderer.xr.enabled = true;
+    // 11/23 - fix unrealistic color of HD chair demo
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 0.8;
+
     // renderer.shadowMapEnabled = true;
     // renderer.gammaOutput = true; // for color correction, see https://blender.stackexchange.com/questions/34728/materials-from-blender-to-three-js-colors-seem-to-be-different
     this.container.appendChild( this.renderer.domElement );
@@ -298,7 +332,7 @@ export class ModelLoader {
           loader = new FBXLoader();
           break;
         case ModelType.image:
-          return this.loadPNGResource().then(resolve);
+          return this.loadImageResource().then(resolve);
       }
 
       // Load a glTF resource
@@ -323,24 +357,49 @@ export class ModelLoader {
     });
   }
 
-  async loadPNGResource(): Promise<void> {
+  async loadImageResource(): Promise<void> {
+    // const loader = new THREE.TextureLoader();
+    // const texture: THREE.DataTexture = await loader.loadAsync(this.resource.path);
+    // const img = new THREE.MeshBasicMaterial({
+    //   map: texture,
+    // });
+
+    // //this.model = new THREE.Mesh(new THREE.PlaneGeometry().rotateX( - Math.PI / 2 ), img);
+    // let modelGeometery: THREE.PlaneGeometry = new THREE.PlaneGeometry(0.9, 0.9 / this.resource.aspectRatio);
+    // if (this.resource.width && this.resource.height) {
+    //   modelGeometery = new THREE.PlaneGeometry(this.resource.width, this.resource.height);
+    // }
+    // if (this.resource.width) {
+    //   modelGeometery = new THREE.PlaneGeometry(this.resource.width, this.resource.width / this.resource.aspectRatio);
+    // }
+    // this.model = new THREE.Mesh(modelGeometery, img);
+    // this.model.visible = false;
+    // // this.model.lookAt(0, 1, 0);
+
     const loader = new THREE.TextureLoader();
-    const texture: THREE.DataTexture = await loader.loadAsync(this.resource.path);
-    const img = new THREE.MeshBasicMaterial({
-      map: texture,
+    const texture: THREE.DataTexture = await loader.loadAsync(this.resource.path) as THREE.DataTexture;
+    const pictureMaterial = new THREE.MeshBasicMaterial({
+      map: texture
     });
 
-    //this.model = new THREE.Mesh(new THREE.PlaneGeometry().rotateX( - Math.PI / 2 ), img);
-    let modelGeometery: THREE.PlaneGeometry = new THREE.PlaneGeometry(0.9, 0.9 / this.resource.aspectRatio);
-    if (this.resource.width && this.resource.height) {
-      modelGeometery = new THREE.PlaneGeometry(this.resource.width, this.resource.height);
-    }
-    if (this.resource.width) {
-      modelGeometery = new THREE.PlaneGeometry(this.resource.width, this.resource.width / this.resource.aspectRatio);
-    }
-    this.model = new THREE.Mesh(modelGeometery, img);
+    const borderMaterial = new THREE.MeshBasicMaterial({
+      color: 0x111111
+    });
+
+    const materials = [
+      borderMaterial, // right
+      borderMaterial, // left
+      borderMaterial, // top
+      borderMaterial, // maybe bottom
+      pictureMaterial, // front
+      borderMaterial // Back side
+    ];
+
+    this.model = new THREE.Mesh(
+      new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
+      materials
+    );
     this.model.visible = false;
-    // this.model.lookAt(0, 1, 0);
 
     if (DEBUG_CONTROLS) {
       const guiPosition = ModelLoader.DatGui.addFolder("position");
@@ -365,11 +424,8 @@ export class ModelLoader {
 
   }
 
-  //
-
-  animate() {
+  animate(): void {
     this.renderer.setAnimationLoop((timestamp: any, frame: any) => this.render(timestamp, frame));
-    // this.renderer.setAnimationLoop(this.render);
   }
 
   render (timestamp: any, frame: XRFrame): any {
@@ -401,7 +457,7 @@ export class ModelLoader {
         } );
 
         session.addEventListener( 'end', () => {
-
+          this.renderer.setAnimationLoop(null);
           this.hitTestSourceRequested = false;
           this.hitTestSource = null;
           this.modelPositioned = false;
@@ -475,103 +531,91 @@ export class ModelLoader {
   rzLine: THREE.Line;
 
   addModelLines() {
-    // const linegeometry = new THREE.Geometry();
-    // // linegeometry.vertices.push( new THREE.Vector3(0, 0, 0), this.model.position );
-    // linegeometry.vertices.push( this.camera.position, this.model.position ); // draws line from origin to model
-    // const line = new THREE.Line( linegeometry, new THREE.LineBasicMaterial( {
-    //     color: 0x33eeef,
+    // 2/08/2021 - commented out due to breaking changes in three.js upgrade.
+
+    // // add x line
+    // if (this.xLine) {
+    //   this.scene.remove(this.xLine);
+    // }
+    // const xGeometry = new THREE.Geometry();
+    // xGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x + 0.5, this.model.position.y, this.model.position.z) );
+    // this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
+    //     color: "red",
     // } ) );
-    // this.scene.add( line );
+    // this.scene.add( this.xLine );
 
-    // add x line
-    if (this.xLine) {
-      this.scene.remove(this.xLine);
-    }
-    const xGeometry = new THREE.Geometry();
-    xGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x + 0.5, this.model.position.y, this.model.position.z) );
-    this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
-        color: "red",
-    } ) );
-    this.scene.add( this.xLine );
+    // // add y line
+    // if (this.yLine) {
+    //   this.scene.remove(this.yLine);
+    // }
+    // const yGeometry = new THREE.Geometry();
+    // yGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y + 0.5, this.model.position.z) );
+    // this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
+    //     color: "green",
+    // } ) );
+    // this.scene.add( this.yLine );
 
-    // add y line
-    if (this.yLine) {
-      this.scene.remove(this.yLine);
-    }
-    const yGeometry = new THREE.Geometry();
-    yGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y + 0.5, this.model.position.z) );
-    this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
-        color: "green",
-    } ) );
-    this.scene.add( this.yLine );
+    // // add z line
+    // if (this.zLine) {
+    //   this.scene.remove(this.zLine);
+    // }
+    // let zGeometry = new THREE.Geometry();
+    // zGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y, this.model.position.z + 0.5) );
+    // this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
+    //     color: "blue",
+    // } ) );
+    // this.scene.add( this.zLine );
 
-    // add z line
-    if (this.zLine) {
-      this.scene.remove(this.zLine);
-    }
-    let zGeometry = new THREE.Geometry();
-    zGeometry.vertices.push( this.model.position, new THREE.Vector3(this.model.position.x, this.model.position.y, this.model.position.z + 0.5) );
-    this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
-        color: "blue",
-    } ) );
-    this.scene.add( this.zLine );
-
-    ////////////
-    if (this.rxLine) {
-      this.scene.remove(this.rxLine);
-    }
-    zGeometry = new THREE.Geometry();
-    const rotation = this.model.rotation.toVector3();
-    zGeometry.vertices.push( rotation, new THREE.Vector3(rotation.x + 0.5, rotation.y, rotation.z) );
-    this.rxLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
-        color: "yellow",
-    } ) );
-    this.scene.add( this.rxLine );
+    // ////////////
+    // if (this.rxLine) {
+    //   this.scene.remove(this.rxLine);
+    // }
+    // zGeometry = new THREE.Geometry();
+    // const rotation = this.model.rotation.toVector3();
+    // zGeometry.vertices.push( rotation, new THREE.Vector3(rotation.x + 0.5, rotation.y, rotation.z) );
+    // this.rxLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
+    //     color: "yellow",
+    // } ) );
+    // this.scene.add( this.rxLine );
   }
 
   addTransformLines(transform: XRRigidTransform) {
-    // var linegeometry = new THREE.Geometry();
-    // // linegeometry.vertices.push( new THREE.Vector3(0, 0, 0), this.model.position );
-    // linegeometry.vertices.push( this.camera.position, this.model.position ); // draws line from origin to model
-    // var line = new THREE.Line( linegeometry, new THREE.LineBasicMaterial( {
-    //     color: 0x33eeef,
+    // 2/08/2021 - commented out due to breaking changes in three.js upgrade.
+    
+    // const startVector = new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z);
+
+    // // draw model x axis
+    // if (this.xLine) {
+    //   this.scene.remove(this.xLine);
+    // }
+    // const xGeometry = new THREE.Geometry();
+    // xGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x + 0.5, transform.position.y, transform.position.z) );
+    // this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
+    //     color: 0xff6666,
     // } ) );
-    // this.scene.add( line );
+    // this.scene.add( this.xLine );
 
-    const startVector = new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z);
+    // // add y line
+    // if (this.yLine) {
+    //   this.scene.remove(this.yLine);
+    // }
+    // const yGeometry = new THREE.Geometry();
+    // yGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y + 0.5, transform.position.z) );
+    // this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
+    //     color: 0x66ff66,
+    // } ) );
+    // this.scene.add( this.yLine );
 
-    // draw model x axis
-    if (this.xLine) {
-      this.scene.remove(this.xLine);
-    }
-    const xGeometry = new THREE.Geometry();
-    xGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x + 0.5, transform.position.y, transform.position.z) );
-    this.xLine = new THREE.Line( xGeometry, new THREE.LineBasicMaterial( {
-        color: 0xff6666,
-    } ) );
-    this.scene.add( this.xLine );
-
-    // add y line
-    if (this.yLine) {
-      this.scene.remove(this.yLine);
-    }
-    const yGeometry = new THREE.Geometry();
-    yGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y + 0.5, transform.position.z) );
-    this.yLine = new THREE.Line( yGeometry, new THREE.LineBasicMaterial( {
-        color: 0x66ff66,
-    } ) );
-    this.scene.add( this.yLine );
-
-    // add z line
-    if (this.zLine) {
-      this.scene.remove(this.zLine);
-    }
-    const zGeometry = new THREE.Geometry();
-    zGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z + 0.5) );
-    this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
-        color: 0x6666ff,
-    } ) );
-    this.scene.add( this.zLine );
+    // // add z line
+    // if (this.zLine) {
+    //   this.scene.remove(this.zLine);
+    // }
+    // const zGeometry = new THREE.Geometry();
+    // zGeometry.vertices.push( startVector, new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z + 0.5) );
+    // this.zLine = new THREE.Line( zGeometry, new THREE.LineBasicMaterial( {
+    //     color: 0x6666ff,
+    // } ) );
+    // this.scene.add( this.zLine );
   }
 
 

@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  </head>
+  <body>
+    <h2>Order Confirmation</h2>
+    <p>
+      This is an example order confirmation page.
+    </p>
+    <script>
+      (function() {
+        // Widget configuration
+        window.vz_config = {
+          api_key: "tEchctauXAPC/ADzD2d0GU/vwM0kUPzw1A3WJS2DG14="
+        };
+
+        var d = document;
+        var s = d.createElement("script");
+        s.src = "https://localhost:5555/embed.js";
+        s.async = true;
+        s.setAttribute("data-timestamp", +new Date());
+        (d.head || d.body).appendChild(s);
+
+        // Analytics configuration
+        window.vza_commands = window.vza_commands || [];
+        window.vza = window.vza||function(){window.vza_commands.push(arguments);};
+
+        // Example Order object, replace the values with your order information.
+        var order = {
+          order_id: "ORD" + Math.trunc(Math.random() * 10000),
+          timestamp: '2020-10-31T01:34:36.257Z',
+          total: 120.32,
+          customer: {
+            first_name: "Juan",
+            last_name: "Doe",
+            email: "juan@gmail.com",
+            phone: "5555555555"
+          },
+          items: [
+            {
+              product_id: "3936965361731",
+              sku: "abc123",
+              upc: "0713823985802",
+              name: "Sunglasses",
+              price: 10.25,
+              description: "Cool new sunglasses",
+              images: [
+                "https://picsum.photos/id/1080/200",
+                "https://picsum.photos/id/118/200"
+              ]
+            }
+          ]
+        };
+
+        // Send the order
+        vza('send_order', order);
+      })();
+    </script>
+  </body>
+</html>

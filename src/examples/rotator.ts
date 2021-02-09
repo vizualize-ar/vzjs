@@ -15,9 +15,10 @@ const scene = new THREE.Scene();
 const camera = createCamera();
 
 addLight();
-const obj = addCube();
-// const obj = addCylinder();
-new RotatorZoom(container, obj, new RotatorZoomOptions(true, true, true, 180, PlaneDirection.horizontal));
+// 2/08/2021 - commented out due to breaking changes in three.js upgrade.
+// const obj = addCube();
+// // const obj = addCylinder();
+// new RotatorZoom(container, obj, new RotatorZoomOptions(true, true, true, 180, PlaneDirection.horizontal));
 addRenderer();
 animate();
 
@@ -86,32 +87,33 @@ function addLight() {
 }
 
 function addCube() {
-  const boxGeometry = new THREE.BoxGeometry(100, 100, 100);
+  // 2/08/2021 - commented out due to breaking changes in three.js upgrade.
+  // const boxGeometry = new THREE.BoxGeometry(100, 100, 100);
 
-  for (let i = 0; i < boxGeometry.faces.length; i += 2)
-  {
+  // for (let i = 0; i < boxGeometry.faces.length; i += 2)
+  // {
 
-    const color = {
-      h: (1 / (boxGeometry.faces.length)) * i,
-      s: 0.5,
-      l: 0.5
-    };
+  //   const color = {
+  //     h: (1 / (boxGeometry.faces.length)) * i,
+  //     s: 0.5,
+  //     l: 0.5
+  //   };
 
-    boxGeometry.faces[i].color.setHSL(color.h, color.s, color.l);
-    boxGeometry.faces[i + 1].color.setHSL(color.h, color.s, color.l);
+  //   boxGeometry.faces[i].color.setHSL(color.h, color.s, color.l);
+  //   boxGeometry.faces[i + 1].color.setHSL(color.h, color.s, color.l);
 
-  }
+  // }
 
-  const cubeMaterial = new THREE.MeshBasicMaterial(
-  {
-    vertexColors: true
-  });
+  // const cubeMaterial = new THREE.MeshBasicMaterial(
+  // {
+  //   vertexColors: true
+  // });
 
-  const obj = new THREE.Mesh(boxGeometry, cubeMaterial);
-  obj.position.y = 150;
-  scene.add(obj);
+  // const obj = new THREE.Mesh(boxGeometry, cubeMaterial);
+  // obj.position.y = 150;
+  // scene.add(obj);
 
-  return obj;
+  // return obj;
 }
 
 function addCylinder() {
