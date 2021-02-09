@@ -244,6 +244,12 @@ export class ModelLoader {
       if (productForm) {
         productForm.submit();
       }
+
+      // squarespace
+      const sqsAddToCart = document.querySelector<HTMLElement>('.sqs-add-to-cart-button');
+      if (sqsAddToCart) {
+        sqsAddToCart.click();
+      }
     });
 
     // CONTROLS
@@ -581,7 +587,7 @@ export class ModelLoader {
 
   addTransformLines(transform: XRRigidTransform) {
     // 2/08/2021 - commented out due to breaking changes in three.js upgrade.
-    
+
     // const startVector = new THREE.Vector3(transform.position.x, transform.position.y, transform.position.z);
 
     // // draw model x axis
