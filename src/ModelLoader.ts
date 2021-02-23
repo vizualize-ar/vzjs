@@ -248,7 +248,7 @@ export class ModelLoader {
       // squarespace
       const sqsAddToCart = document.querySelector<HTMLElement>('.sqs-add-to-cart-button');
       if (sqsAddToCart) {
-        sqsAddToCart.click();
+        document.getElementById(sqsAddToCart.id).click();
       }
     });
 
