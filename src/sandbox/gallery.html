@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <style>
+      .gallery {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        justify-items: center;
+      }
+      .gallery img {
+        width: 400px;
+      }
+      .image-container {
+        flex: auto;
+        position: relative;
+      }
+    </style>
+    <!-- Vizualize -->
+    <script type="text/javascript">
+      (function() {    
+        window.vz_config = {
+          // api_key: "8UQWVx7mosIrYLn55SD06EC08stollEL9uGHRUpqe3M=",
+          api_key: "Gbmb7PtQ9bMczNwUrlRsjzLXkMFP8D72MfKp+Z77WH4=",
+        };
+    
+        var d = document;
+        var s = d.createElement("script");
+        // s.src = "https://localhost:5555/embed.js";
+        s.src = "https://192.168.1.18:5555/embed.js?force=force";
+        // s.src = "https://widgets.vizualize.io/embed.js";
+        s.async = true;
+        s.setAttribute("data-timestamp", +new Date());
+        (d.head || d.body).appendChild(s);
+      })();
+    </script>
+    <!-- Vizualize -->
+  </head>
+  <body>
+    <div class="gallery">
+      <div class="image-container">
+        <img src="//cdn.shopify.com/s/files/1/0023/2167/8403/products/Red_Tupac_White_1024x1024.jpg?v=1583792274" />
+        <a data-vzid="ar-trigger"
+            data-vz-product-id="3940720476227"
+            role="button"
+            style='
+              position: absolute;
+              width: 100px;
+              font-size: 12px;
+              color: #333;
+              z-index: 100;
+              bottom: 10px;
+              left: 10px;
+              padding: 3px 8px;
+              border: dotted 1px;
+              '>
+              <img style="display: none;" />
+              View on your wall
+        </a>
+      </div>
+      <div class="image-container">
+        <img src="//cdn.shopify.com/s/files/1/0023/2167/8403/products/Red_Tupac_White_1024x1024.jpg?v=1583792274" />
+        <a data-vzid="ar-trigger"
+            data-vz-product-id="3936965361731"
+            role="button"
+            style='
+              position: absolute;
+              width: 100px;
+              font-size: 12px;
+              color: #333;
+              z-index: 100;
+              bottom: 10px;
+              left: 10px;
+              padding: 3px 8px;
+              border: dotted 1px;
+              '>
+              <img style="display: none;" />
+              View on your wall
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

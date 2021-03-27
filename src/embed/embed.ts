@@ -146,28 +146,50 @@ class Embed {
       this.logDebugInfo();
       // Get config from window object created from product page
       this.config = window.vz_config;
-      if (!this.config.api_key) return; // not configured correctly
+      if (!this.config.api_key) {
+        return; // not configured correctly
+      }
       this.P1_createGlobal();
-      if (this.config.identifier && await this.isARSupported()) {
-        const customerApiKey = this.config.api_key;
+      const trigger = document.querySelector<HTMLElement>('[data-vzid="ar-trigger"]');
+      if (this.config.identifier) {
+        if (await this.isARSupported()) {
+          const customerApiKey = this.config.api_key;
 
-        if ((customerApiKey || "") == "") {
-          console.error(
-            "Vizualize: Missing API key. Please refer to the documentation for proper usage."
-          );
-          return;
-        }
+          if ((customerApiKey || "") == "") {
+            console.error(
+              "Vizualize: Missing API key. Please refer to the documentation for proper usage."
+            );
+            return;
+          }
 
-        // this.createGlobal();
-        if (await this.P1_createModelLoader()) {
-          this.P1_createOverlay();
+          if (await this.P1_createModelLoader(trigger, this.config.identifier)) {
+            this.P1_createOverlay();
+          }
+        } else if (checks.IS_AR_QUICKLOOK_CANDIDATE) {
+          this.createQuickLook(trigger, this.config.identifier);
         }
-      } else if (checks.IS_AR_QUICKLOOK_CANDIDATE) {
-        this.createQuickLook();
+      } else {
+        // single item not configured, look for a gallery/list of products
+        this.initList();
       }
     } catch (e) {
       console.error('VZ embed error', e);
     }
+  }
+
+  /** Searches for a list of images that have a data-vz-id attribute */
+  async initList(): Promise<void> {
+    const isARSupported = this.isARSupported();
+    const arTargets = document.querySelectorAll<HTMLElement>('[data-vz-product-id]');
+    arTargets.forEach((trigger) => {
+      const productId = trigger.dataset.vzProductId;
+      if (isARSupported) {
+        this.P1_createModelLoader(trigger, productId);
+      } else if (checks.IS_AR_QUICKLOOK_CANDIDATE) {
+        this.createQuickLook(trigger, productId);
+      }
+    });
+    this.P1_createOverlay();
   }
 
   async isARSupported(): Promise<boolean> {
@@ -180,18 +202,18 @@ class Embed {
     }
   }
 
-  async createQuickLook(): Promise<boolean> {
+  async createQuickLook(trigger: HTMLElement, productId: string): Promise<boolean> {
     console.log('creating quicklook')
-    const product = await this.loadProduct();
+    const product = await this.loadProduct(productId);
     if (!product) return false;
 
-    const loader = new QuickLookLoader();
+    const loader = new QuickLookLoader(trigger);
     loader.load(product); 
   }
 
-  async P1_createModelLoader(): Promise<boolean> {
+  async P1_createModelLoader(trigger: HTMLElement, productId: string): Promise<boolean> {
     // fetch data from API
-    const product = await this.loadProduct();
+    const product = await this.loadProduct(productId);
     if (!product) return false;
 
     const model = product.model_direction === PlaneDirection.vertical
@@ -209,20 +231,21 @@ class Embed {
       product.height,
     );
     new ModelLoader(
+      trigger,
       modelOptions,
       new LoaderOptions(false, true, true),
     );
     return true;
   }
 
-  async loadProduct(): Promise<Product> {
+  async loadProduct(productId: string): Promise<Product> {
     try {
       const requestInit: RequestInit = {
         headers: {
           Authorization: `Bearer ${this.config.api_key}`
         }
       }
-      const url = `${this.apiUrl}/p/products/${this.config.identifier}`;
+      const url = `${this.apiUrl}/p/products/${productId}`;
       console.log('loading product', url)
       const input: RequestInfo = new Request(url, requestInit);
       const response = await fetch(input);

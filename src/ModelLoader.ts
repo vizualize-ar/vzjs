@@ -67,7 +67,7 @@ export class ModelLoader {
   // init();
   // animate();
 
-  constructor(private resource: ModelOptions, private loaderOptions: LoaderOptions) {
+  constructor(private trigger: HTMLElement, private resource: ModelOptions, private loaderOptions: LoaderOptions) {
     this.init();
   }
 
@@ -84,15 +84,12 @@ export class ModelLoader {
 
     try {
       this.overlayDiv = document.querySelector('[data-vzid="ol"]');
-      const triggers = document.querySelectorAll<HTMLElement>('[data-vzid="ar-trigger"]');
-      triggers.forEach((trigger) => {
-        trigger.style.display = '';
-        trigger.addEventListener('click', () => {
-          this.positionMessageElement.style.display = 'none';
-          this.addCartElement.style.display = 'none';
-          this.moveGestureElement.style.display = '';
-          this.initAR();
-        });
+      this.trigger.style.display = '';
+      this.trigger.addEventListener('click', () => {
+        this.positionMessageElement.style.display = 'none';
+        this.addCartElement.style.display = 'none';
+        this.moveGestureElement.style.display = '';
+        this.initAR();
       });
 
       if (DEBUG_CONTROLS) {
@@ -472,6 +469,9 @@ export class ModelLoader {
           this.positionMessageElement.style.display = "none";
           this.addCartElement.style.display = 'none';
           this.moveGestureElement.style.display = 'none';
+          
+          document.body.removeChild(this.container);
+          this.renderer.resetState();
         } );
 
         this.hitTestSourceRequested = true;

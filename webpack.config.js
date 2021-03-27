@@ -78,6 +78,15 @@ module.exports = {
             ignore: ['**/*.ts'],
           },
         },
+        {
+          from: './src/sandbox/**/*',
+          transformPath(targetPath, absolutePath) {
+            return targetPath.replace("src\\", "");
+          },
+          globOptions: {
+            ignore: ['**/*.ts'],
+          },
+        },
         // Not currently being used
         // {
         //   from: './src/embed/qlbanner.html',
