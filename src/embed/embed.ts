@@ -150,8 +150,16 @@ class Embed {
         return; // not configured correctly
       }
       this.P1_createGlobal();
-      const trigger = document.querySelector<HTMLElement>('[data-vzid="ar-trigger"]');
       if (this.config.identifier) {
+        // Page might have multiple triggers on it for varying device sizes. Some are hidden
+        // for specific screen sizes (eg, tablet vs phone). Find the one whose parent is visible.
+        const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-vzid="ar-trigger"]'));
+        let trigger: HTMLElement = null;
+        for(trigger of triggers) {
+          if (trigger.parentElement.clientHeight > 0) {
+            break;
+          } 
+        }
         if (await this.isARSupported()) {
           const customerApiKey = this.config.api_key;
 
@@ -179,7 +187,7 @@ class Embed {
 
   /** Searches for a list of images that have a data-vz-id attribute */
   async initList(): Promise<void> {
-    const isARSupported = this.isARSupported();
+    const isARSupported = await this.isARSupported();
     const arTargets = document.querySelectorAll<HTMLElement>('[data-vz-product-id]');
     arTargets.forEach((trigger) => {
       const productId = trigger.dataset.vzProductId;

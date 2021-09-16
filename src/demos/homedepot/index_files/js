@@ -1,0 +1,9 @@
+(function() {
+try {
+    if(typeof(__metaPixelCBmediaMath) == 'function'){__metaPixelCBmediaMath('4a745f24-c022-4300-8d7f-ba57ae1d09f8', '4a745f24-c022-4300-8d7f-ba57ae1d09f8', {new_uuid: false});}
+}
+catch(ex)
+{
+   document.createElement("img").src="//pixel.mathtag.com/error/img?error_domain=wrap_js&what="+encodeURIComponent(ex.message);
+}
+})();

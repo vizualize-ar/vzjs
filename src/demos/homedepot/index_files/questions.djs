@@ -1,0 +1,49 @@
+$BV.Internal.ajaxCallback(function(url,apiConfig){
+if(!/(^|\.)(bazaarvoice\.com|beardedvictory\.com|homedepot\.com)(:\d+)?$/.test(location.hostname)){
+throw "Bazaarvoice: Permission denied";
+}
+$BV.Internal.configureAppLoader("qa",false,{"cmn/1999/lightbox":"lightbox","cmn/1999m/rpcSupport":"rpcSupport","cmn/1999m/analyticsInternalHooks":"analyticsHooks","cmn/1999redes/analyticsInternalHooks":"analyticsHooks"});
+$BV.Internal.require(["qa/injection.qa","requester","feedback","domUtils","contentFocusingSupport","browserVersion","qa/analyticsInternalLegacyHooksQA","qa/contentFocusingSupportQA","jquery.core","dropdown","qa/analyticsHooksQA","parseUri","cookies","analyticsVersioning","analyticsHooks","cmn/1999m/analyticsInternalHooks","cmn/1999redes/analyticsInternalHooks","magpie","magpieTracking","analyticsAutoTagHooks","animationOptions","socialConnect","facebookConnect","facebookOpenGraph","jquery.effects.core","contentDisplay"],function(Injection){
+var materials={"BVQASourceID":"<div id=\"BVQAWidgetID\" class=\"BVQAWidget\"><div id=\"BVQABrowsePageID\" class=\"BVQAWidgetWrapper BVQABrowsePage\"><div id=\"BVQAHeaderID\" class=\"BVQAHeader\"> <div class=\"BVQAHeaderWrapper\">\r\n <h1 id=\"BVQAHeaderTitleID\" class=\"BVQATitle BVQAHeaderTitle\">\r\nCustomer Questions &amp; Answers <\/h1>\r\n <div class=\"BVQAHeaderProductInfo BVQANoQuestions\">\r\n \r\n <\/div>\r\n <\/div>\r\n<h2 id=\"BVQAHeaderSubTitleID\" class=\"BVQASubTitle BVQAHeaderSubTitle\">Ask your questions. Share your answers.<\/h2><\/div><div id=\"BVQAMainID\" class=\"BVQAMain BVQAMainView\"><div class=\"BVQAPageTabs\"> <div class=\"BVQAPageTabSpacerLeft\">&nbsp;<\/div>\n\n <div class=\"BVQAPageTabSpacerMiddle\">&nbsp;<\/div>\n<div id=\"BVQAPageTabBrowseID\" class=\"BVQAPageTab BVQASelectedPageTab\">Clear Search Term<\/div> <div class=\"BVQAPageTabSpacerMiddle\">&nbsp;<\/div>\n<div id=\"BVQAPageTabSearchID\" class=\"BVQAPageTab\" onclick=\"$BV.Internal.Requester.get('https://homedepot.ugc.bazaarvoice.com/answers/1999aa/product/309165450/searchquestions.djs?format=embeddedhtml&amp;search=__SEARCHTEXT__','BVQAFrame','__CONFIGKEY__'); return false;\"><a data-bvjsref=\"https://homedepot.ugc.bazaarvoice.com/answers/1999aa/product/309165450/searchquestions.djs?format=embeddedhtml&amp;search=__SEARCHTEXT__\" data-bvcfg=\"__CONFIGKEY__\" name=\"BV_TrackingTag_QA_Display_SearchTab\" href=\"javascript://\" title=\"Search Q&amp;A\" class=\"BVQAPageTabLink\">Search Q&amp;A<\/a><\/div>\n <div class=\"BVQAPageTabSpacerRight\">&nbsp;<\/div>\n<\/div><div id=\"BVQAViewQuestionsContentID\" class=\"BVQAMainContent BVQAViewQuestionsContent\"><div id=\"BVQANoQuestionsID\" class=\"BVQANoQuestions\"><div class=\"BVQATitle\">Be the first to ask a question!<\/div><a data-bvjsref=\"https://homedepot.ugc.bazaarvoice.com/answers/submit/1999aa/product/309165450/askquestion.djs?authsourcetype=__AUTHTYPE__&amp;campaignid=BV_QA_BROWSE&amp;format=embeddedhtml&amp;innerreturn=https%3A%2F%2Fhomedepot.ugc.bazaarvoice.com%2Fanswers%2F1999aa%2Fproduct%2F309165450%2Fquestions.djs%3Fformat%3Dembeddedhtml&amp;numanswers=0&amp;numquestions=0&amp;return=__RETURN__&amp;sessionparams=__BVSESSIONPARAMS__&amp;submissionparams=__BVSUBMISSIONPARAMETERS__&amp;submissionurl=__BVSUBMISSIONURL__&amp;user=__USERID__\" data-bvcfg=\"__CONFIGKEY__\" onclick=\"bvShowContentOnReturnQA('1999aa', '309165450', 'BVQAWidgetID');return typeof(BVQAOnSubmit)=='function' ? BVQAOnSubmit(this.href, 'QUESTION_SUBMISSION') : true;\" name=\"BV_TrackingTag_QA_Display_AskFirstQuestion\" href=\"javascript://\" title=\"Ask the first question\">Ask the first question<\/a><div class=\"BVRRCustomTypicalQuestions\"><p>Typical questions asked about products:<\/p> <ul> <li>Is the product durable?<\/li> <li>Is the product easy to use?<\/li> <li>What are the dimensions of the product?<\/li> <\/ul><\/div><\/div><\/div><\/div><div id=\"BVQAFooterID\" class=\"BVQAFooter\"><div id=\"BVQAGuidelinesID\" class=\"BVQAGuidelines\"><a name=\"BV_TrackingTag_QA_Display_QAndAGuidelines\" href=\"https://homedepot.ugc.bazaarvoice.com/answers/1999aa/content/guidelines.htm\" target=\"_blank\" onclick=\"window.open(this.href,null,'left=50,top=50,width=500,height=500,toolbar=1,location=0,resizable=1,scrollbars=1'); return false;\" title=\"Policies &amp; Guidelines\">Policies &amp; Guidelines<\/a><\/div><\/div><\/div><\/div>","BVQASummaryBoxSourceID":"<div id=\"BVQASummaryBoxID\" class=\"BVQASummaryBox BVQASummaryBoxView\"><h1 id=\"BVQASummaryBoxTitleID\" class=\"BVQATitle BVQASummaryBoxTitle\"><\/h1><div id=\"BVQASummaryBoxAskFirstQuestionID\" class=\"BVQASummaryBoxLink\"><a data-bvjsref=\"https://homedepot.ugc.bazaarvoice.com/answers/submit/1999aa/product/309165450/askquestion.djs?authsourcetype=__AUTHTYPE__&amp;campaignid=BV_QA_SUMMARY_ZERO_QUESTIONS&amp;format=embeddedhtml&amp;innerreturn=https%3A%2F%2Fhomedepot.ugc.bazaarvoice.com%2Fanswers%2F1999aa%2Fproduct%2F309165450%2Fquestions.djs%3Fformat%3Dembeddedhtml&amp;numanswers=0&amp;numquestions=0&amp;return=__RETURN__&amp;sessionparams=__BVSESSIONPARAMS__&amp;submissionparams=__BVSUBMISSIONPARAMETERS__&amp;submissionurl=__BVSUBMISSIONURL__&amp;user=__USERID__\" data-bvcfg=\"__CONFIGKEY__\" onclick=\"bvShowContent('QA','1999aa','309165450','BVQAWidgetID');return typeof(BVQAOnSubmit)=='function' ? BVQAOnSubmit(this.href, 'QUESTION_SUBMISSION') : true;\" name=\"BV_TrackingTag_QA_Display_AskQuestion\" href=\"javascript://\" title=\"Ask a Question\">Ask the first question<\/a><\/div><\/div>"},
+initializers={"BVQASourceID":[{"init":"bindJsLinks","data":{},"module":"requester"}],"BVQASummaryBoxSourceID":[{"init":"bindJsLinks","data":{},"module":"requester"}]},
+widgets={};
+widgets["content"]={"sourceId":"BVQASourceID","handledContentTypes":["Question","Answer"],"containerId":"BVQAContainer"};
+widgets["summary"]={"sourceId":"BVQASummaryBoxSourceID","containerId":"BVQASummaryContainer"};
+var injectionData={
+apiConfig:apiConfig,
+bvstateInfo:"p/309165450",
+canonicalTags:false,
+containerInitializer:false,
+cookiePath:"/",
+crossDomainUrl:"https://homedepot.ugc.bazaarvoice.com/answers/1999aa/crossdomain.htm?format=embedded",
+embeddedUrl:url,
+globalInitializers:[{"module":"browserVersion","init":"initialize","data":{"useBodyTag":false,"containerId":"BVQAContainer"}},{"module":"browserVersion","init":"initialize","data":{"useBodyTag":false,"containerId":"BVQASummaryContainer"}},{"module":"dropdown","init":"addSelectHandlers","data":{"dropdownId":"BVQASortListID"}},{"module":"feedback","init":"onInjection","data":{"options":{"cookiePrefixes":{"Voting":"pfv"},"contentFocusing":{"args":["1999aa","309165450"],"fn":"bvShowContentOnReturnQA"},"cookiePath":"/"},"id":"Product_lm7h1cnmopnz16wlqqqtc1p7z"}},{"module":"feedback","init":"onInjection","data":{"options":{"cookiePrefixes":{"Voting":"qfv","Inappropriate":"qif"},"contentFocusing":{"args":["1999aa","309165450"],"fn":"bvShowContentOnReturnQA"},"cookiePath":"/"},"id":"Question_lm7h1cnmopnz16wlqqqtc1p7z"}},{"module":"feedback","init":"fingerprint","data":{"deviceFingerprintScriptURL":"https://mpsnare.iesnare.com/snare.js"}},{"module":"feedback","init":"onInjection","data":{"options":{"cookiePrefixes":{"Voting":"afv","Inappropriate":"aif"},"contentFocusing":{"args":["1999aa","309165450"],"fn":"bvShowContentOnReturnQA"},"cookiePath":"/"},"id":"Answer_lm7h1cnmopnz16wlqqqtc1p7z"}},{"module":"qa/contentFocusingSupportQA","init":"postInjection","data":{"application":"QA","defaultContentContainerId":"BVQAContainer","displayCode":"1999aa","tabSwitcher":"bvShowTab","source":"readLink"}}],
+gotoCookieRegexp:/^https?:\/\/[^/?#]+(\/[^?#]*)\//,
+inFrameSubmissionEnabled:true,
+pageIdPrefix:"BVQA",
+pageTrackers:[],
+postInjectionFunction:function(Inject){
+if (window.$bv.isFunction(window.bvClosePopups)) {
+window.$bv('.BVQAQuestionHeader').click(window.bvClosePopups);
+}
+if (window.bvAppendSubmission) {
+window.bvAppendSubmission.showContent('QA');
+}
+},
+replaceDisplayTokens:true,
+replacementsPrefix:"BVQA",
+replaceSessionParameters:false,
+setWindowTitle:false,
+soiContainerID:"BVQAContentValidationID_309165450",
+soiContentIDs:[],
+sviParameterName:"bvqap",
+sviRedirectBaseUrl:"https://homedepot.ugc.bazaarvoice.com/answers/1999aa/",
+webAnalyticsConfig:{"customTrackedObjectsSelector":"","jsonData":{"bvDisplayCode":"1999aa","deploymentZone":"main_site","autoTagAnalyticsConfiguration":{"trackSubmissionPageLoads":true,"trackFormActions":false,"autoTagAnalyticsVersion":"4.8","vendors":[{"vendorName":"magpie","anonymous":false,"brandDomain":"false","defaultClassesOnly":false},{"vendorName":"omniture","eventNum":11,"eVarNum":54,"trackerReference":"s","brandVoiceTrackingType":null,"brandVoiceTrackingEVarNum":0}],"productTracking":{"tracking":true,"initialProductDisplay":false}},"userLocale":"en_US","productId":"309165450","eType":"Read","subjectType":"Product","bvAnalyticsVersion":"5.0","rootCategoryId":"da466162-fbac-4240-b739-1c4325d7af37","analyticsWhitespaceTrackingEnabled":true,"bvProduct":"AskAndAnswer","attributes":{"numQuestions":0,"numAnswers":0,"good":true},"ciTrackingEnabled":false,"bvClientName":"homedepot","brand":"Home Decorators Collection","leafCategoryId":"717b1410-46af-4ee1-abb7-e07413d636ed","bvExtension":{}},"customizersName":"BVQAAnalyticsCustomizers","SIWZeroDeployEnabled":false,"conversionTracking":{"conversionTrackingElementSelector":null,"conversionTrackingMetadataSelector":null,"conversionTrackingParseRegexp":null,"conversionTrackingName":"AddToCart"},"maxTrackingTagTraversalDepth":3,"customContainersFnName":"BVQAAnalyticsCustomContainers","customTrackedObjects":[{"selector":"#productTabsMenu a[href='#questions_answers_full'] span"}]},
+widgetInitializers:initializers,
+widgetLimit:-1,
+widgetMaterials:materials,
+widgetMetadata:widgets,
+windowTitle:null};
+Injection.newInstance().apiInjection(injectionData);
+});
+});

@@ -1,0 +1,347 @@
+(function () {
+  const BASE_APPLY_NOW_URL = 'https://citiretailservices.citibankonline.com/CRS/acq/launch/index.action?app=UNSOL&siteId=PLCN_HOMEDEPOT&sc=30005&cmp=';
+  const SAVE_CARD_ENDPOINT = '/account/view/savecardtoprofile';
+  const applyNowCampaignIds = {
+    pip: {
+      MOBILE_APPLY_NOW: 'C~P~U~O~3~9~ZZZ0~AI~HD~ZZ_1D3',
+      DESKTOP_APPLY_NOW: 'A~P~U~O~3~9~ZZZ0~AI~HD~ZZ_1D3',
+      DESKTOP_PAYMENT_ESTIMATOR_APPLY_NOW: 'A~P~U~J~6~9~ZZZ0~AI~HD~ZZ_1D3',
+      MOBILE_PAYMENT_ESTIMATOR_APPLY_NOW: 'C~P~U~J~6~9~ZZZ0~AI~HD~ZZ_1D3',
+      DESKTOP_PAYMENT_ESTIMATOR_PROMO_APPLY_NOW: 'A~P~U~K~6~9~ZZZ0~AI~HD~ZZ_FD3',
+      MOBILE_PAYMENT_ESTIMATOR_PROMO_APPLY_NOW: 'C~P~U~K~6~9~ZZZ0~AI~HD~ZZ_FD3',
+      appliance: {
+        DESKTOP_APPLIANCE_PROMO: 'A~P~U~J~6~9~ZZZ0~AI~HD~ZZ_2D3',
+        MOBILE_APPLIANCE_PROMO: 'C~P~U~J~6~9~ZZZ0~AI~HD~ZZ_2D3'
+      },
+      specialPromotion: {
+        DESKTOP_APPLY_NOW_SPECIAL_PROMO: 'A~P~U~O~3~9~ZZZ0~AI~HD~ZZ_AD3',
+        MOBILE_APPLY_NOW_SPECIAL_PROMO: 'C~P~U~O~3~9~ZZZ0~AI~HD~ZZ_AD3',
+        DESKTOP_PAYMENT_ESTIMATOR_SPECIAL_PROMO: 'A~P~U~J~6~9~ZZZ0~AI~HD~ZZ_AD3',
+        MOBILE_PAYMENT_ESTIMATOR_SPECIAL_PROMO: 'C~P~U~J~6~9~ZZZ0~AI~HD~ZZ_AD3'
+      }
+    },
+    cart: {
+      DESKTOP_PAYMENT_ESTIMATOR_APPLY_NOW: 'A~S~M~J~2~9~ZZZ0~AI~HD~ZZ_1D3',
+      MOBILE_PAYMENT_ESTIMATOR_APPLY_NOW: 'C~S~M~J~2~9~ZZZ0~AI~HD~ZZ_1D3',
+      DESKTOP_PAYMENT_ESTIMATOR_PROMO_APPLY_NOW: 'A~S~M~K~6~9~ZZZ0~AI~HD~ZZ_FD3',
+      MOBILE_PAYMENT_ESTIMATOR_PROMO_APPLY_NOW: 'C~S~M~K~6~9~ZZZ0~AI~HD~ZZ_FD3',
+      specialPromotion: {
+        DESKTOP_PAYMENT_ESTIMATOR_SPECIAL_PROMO: 'A~S~M~J~2~9~ZZZ0~AI~HD~ZZ_AD3',
+        MOBILE_PAYMENT_ESTIMATOR_SPECIAL_PROMO: 'C~S~M~J~2~9~ZZZ0~AI~HD~ZZ_AD3'
+      }
+    },
+    doTheMath: {
+      DESKTOP_APPLY_NOW: 'A~S~M~V~A~9~ZZZ0~AI~HD~ZZ_1D3',
+      MOBILE_APPLY_NOW: 'C~S~M~V~A~9~ZZZ0~AI~HD~ZZ_1D3',
+      specialPromotion: {
+        DESKTOP_SPECIAL_PROMO: 'A~S~M~V~A~9~ZZZ0~AI~HD~ZZ_AD3',
+        MOBILE_SPECIAL_PROMO: 'C~S~M~V~A~9~ZZZ0~AI~HD~ZZ_AD3'
+      }
+    },
+    thankyou: {
+      DESKTOP_APPLY_NOW: 'A~Q~M~C~5~A~ZZZ4~ZZ~HD~ZZ_1D3',
+      MOBILE_APPLY_NOW: 'C~Q~M~C~5~A~ZZZ4~ZZ~HD~ZZ_1D3',
+    },
+    creditcenter: {
+      DESKTOP_APPLY_NOW: 'A~C~D~Z~1~A~ZZZ0~ZZ~HD~ZZ_1D3',
+      MOBILE_APPLY_NOW: 'A~C~D~Z~1~A~ZZZ0~ZZ~HD~ZZ_1D3',
+      specialPromotion: {
+        DESKTOP_APPLY_NOW_SPECIAL_PROMO: 'A~C~D~Z~1~A~ZZZ0~ZZ~HD~ZZ_1D3',
+        MOBILE_APPLY_NOW_SPECIAL_PROMO: 'A~C~D~Z~1~A~ZZZ0~ZZ~HD~ZZ_1D3'
+      }
+    },
+    homepage: {
+      DESKTOP_APPLY_NOW: 'A~H~8~C~8~A~ZZZ0~AI~HD~ZZ_1D3',
+      MOBILE_APPLY_NOW: 'C~H~8~C~8~A~ZZZ0~AI~HD~ZZ_1D3',
+      specialPromotion: {
+        DESKTOP_APPLY_NOW_SPECIAL_PROMO: 'A~H~8~C~8~A~ZZZ0~AI~HD~ZZ_1D3',
+        MOBILE_APPLY_NOW_SPECIAL_PROMO: 'C~H~8~C~8~A~ZZZ0~AI~HD~ZZ_1D3'
+      }
+    }
+  };
+  const paymentTiersData = {
+    paymentEstimatorModel: {
+      financeEligibleAmount: 299,
+      everyDayFinancingMonths: 6,
+      appliancePromotionMonths: 12,
+      specialPromotionPrice: 499,
+      specialPromotionMonths: 12,
+      tieredPromotionDates: [
+        {
+          startDate: '6/25/2020',
+          endDate: '7/5/2020'
+        },
+        {
+          startDate: '9/3/2020',
+          endDate: '9/9/2020'
+        },
+        {
+          startDate: '11/26/2020',
+          endDate: '12/2/2020'
+        }
+      ],
+      appliancePromotionDates: [
+        {
+          startDate: '1/16/2020',
+          endDate: '1/22/2020'
+        },
+        {
+          startDate: '2/13/2020',
+          endDate: '2/26/2020'
+        },
+        {
+          startDate: '4/30/2020',
+          endDate: '5/6/2020'
+        },
+        {
+          startDate: '5/14/2020',
+          endDate: '6/3/2020'
+        },
+        {
+          startDate: '7/6/2020',
+          endDate: '7/8/2020'
+        },
+        {
+          startDate: '10/8/2020',
+          endDate: '10/14/2020'
+        },
+        {
+          startDate: '11/4/2020',
+          endDate: '11/25/2020'
+        },
+        {
+          startDate: '12/3/2020',
+          endDate: '12/3/2020'
+        },
+        {
+          startDate: '12/17/2020',
+          endDate: '12/23/2020'
+        },
+        {
+          startDate: '1/14/2021',
+          endDate: '1/20/2021'
+        }
+      ],
+      specialPromotionDates: [
+        {
+          startDate: '5/19/2020',
+          endDate: '6/17/2020'
+        }
+      ],
+      estimatorTiers: [{
+        minAmount: 299,
+        maxAmount: 999,
+        tierInMonths: 12
+      }, {
+        minAmount: 999,
+        maxAmount: 1999,
+        tierInMonths: 18
+      }, {
+        minAmount: 1999,
+        tierInMonths: 24
+      }
+      ]
+    }
+  };
+  const toolTipContent = {
+    everyDayFinancing: '6 MONTHS EVERY DAY FINANCING* ON PURCHASES OF $299 OR MORE',
+    appliancePromotion: '12 Months Financing on Appliance purchases.',
+    tieredPromotion: '12 Months on purchases of $299-$998, 18 Months on purchases of $999-$1,998, or 24 Months on purchases of $1,999 or More.',
+    specialPromotion: '6 Months on purchases of $299-$498 or 12 Months on purchases of $499+.'
+  };
+  const prequalDates = {
+    startDate: '1/30',
+    endDate: '7/29/2020'
+  };
+  const prequalCheckLink = 'https://citiretailservices.citibankonline.com/CRS/acq/launch/index.action?app=PQ01&siteId=PLCN_HOMEDEPOT&sc=30052&cmp=A~Z~C~P~1~5~ZZZZ~PQ~HD~ZZ';
+  const isNativeApp = function () {
+    const encodedNative = 'e1%3ds1';
+    const cookie = document.cookie.toLowerCase();
+    return (
+      (cookie &&
+        cookie.indexOf('thd_online_channel') > -1 &&
+        cookie.indexOf(encodedNative) > -1)
+    );
+  };
+  const getPromotionDates = function (promoDateData) {
+    let todayDate = new Date();
+    let promoDates = {};
+    for (let i = 0; i < promoDateData.length; i += 1) {
+      let promotionDate = promoDateData[i];
+      let promoStartDate = new Date(promotionDate.startDate);
+      let promoEndDate = new Date(promotionDate.endDate);
+      promoEndDate.setHours(23, 59, 59);
+      if (promoStartDate <= todayDate && todayDate <= promoEndDate) {
+        promoDates.promoStartDate = promotionDate.startDate;
+        promoDates.promoEndDate = promotionDate.endDate;
+        return promoDates;
+      }
+    }
+    return promoDates;
+  };
+  const getTieredPromotionDates = function () {
+    return getPromotionDates(paymentTiersData.paymentEstimatorModel.tieredPromotionDates);
+  };
+  const getAppliancePromotionDates = function () {
+    return getPromotionDates(paymentTiersData.paymentEstimatorModel.appliancePromotionDates);
+  };
+  const getSpecialPromotionDates = function () {
+    return getPromotionDates(paymentTiersData.paymentEstimatorModel.specialPromotionDates);
+  };
+  const getCurrentPromotionDates = function (isAppliance) {
+    if (isAppliance &&
+        getAppliancePromotionDates() && getAppliancePromotionDates().promoStartDate) {
+      return getAppliancePromotionDates();
+    } else if (getSpecialPromotionDates() && getSpecialPromotionDates().promoStartDate) {
+      return getSpecialPromotionDates();
+    }
+    return getTieredPromotionDates();
+  };
+  const getTooltipText = function (isAppliance) {
+    if (isAppliance &&
+        getAppliancePromotionDates() && getAppliancePromotionDates().promoStartDate) {
+      return toolTipContent.appliancePromotion;
+    } else if (getSpecialPromotionDates() && getSpecialPromotionDates().promoStartDate) {
+      return toolTipContent.specialPromotion;
+    } else if (getTieredPromotionDates() && getTieredPromotionDates().promoStartDate) {
+      return toolTipContent.tieredPromotion;
+    }
+    return toolTipContent.everyDayFinancing;
+  };
+  const getTierMonths = function (price, isAppliance) {
+    let months = paymentTiersData.paymentEstimatorModel.everyDayFinancingMonths;
+    if (getSpecialPromotionDates() && getSpecialPromotionDates().promoStartDate) {
+      if (price >= paymentTiersData.paymentEstimatorModel.specialPromotionPrice) {
+        months = paymentTiersData.paymentEstimatorModel.specialPromotionMonths;
+      }
+    }
+    if (getTieredPromotionDates() && getTieredPromotionDates().promoStartDate) {
+      const tiers = paymentTiersData.paymentEstimatorModel.estimatorTiers;
+      tiers.forEach(function (tier) {
+        const minAmount = tier.minAmount ? tier.minAmount : 0;
+        const maxAmount = tier.maxAmount ? tier.maxAmount : '';
+        if ((maxAmount && (price >= minAmount && price < maxAmount))
+          || (!maxAmount && (price >= minAmount))) {
+          months = tier.tierInMonths;
+        }
+      });
+    } else if (isAppliance
+      && getAppliancePromotionDates() && getAppliancePromotionDates().promoStartDate) {
+      months = paymentTiersData.paymentEstimatorModel.appliancePromotionMonths;
+    }
+    return months;
+  };
+  const getEstimatedPayments = function (price, isAppliance) {
+    if (!price) return;
+    const promotionTerm = getTierMonths(price, isAppliance);
+    // eslint-disable-next-line consistent-return
+    return {
+      promotionTerm: promotionTerm, // eslint-disable-line
+      monthlyPayment: Math.ceil(price / promotionTerm).toLocaleString()
+    };
+  };
+  const getFinanceEligibleAmount = function () {
+    return paymentTiersData.paymentEstimatorModel.financeEligibleAmount;
+  };
+  const getSaveCardBaseUrl = function () {
+    if (isNativeApp()) {
+      return BASE_APPLY_NOW_URL;
+    }
+    let originUrl = window.location.href;
+    if (window.location.href.indexOf('?') > -1) {
+      originUrl = window.location.href.substring(0, window.location.href.indexOf('?'));
+    }
+    return window.location.origin + SAVE_CARD_ENDPOINT +
+      '?originUrl=' + encodeURIComponent(originUrl) +
+      '&step=initial&insideCheckout=false&cmp=';
+  };
+  const getBaseUrl = function () {
+    return getSaveCardBaseUrl();
+  };
+  const getPaymentEstimatorApplynowLinks = function (pageName, isAppliance) {
+    const experience = (pageName && applyNowCampaignIds[pageName.toLowerCase()]) ? pageName.toLowerCase() : 'cart';
+    let desktopUrl = getBaseUrl() +
+    applyNowCampaignIds[experience].DESKTOP_PAYMENT_ESTIMATOR_APPLY_NOW;
+    let mobileUrl = getBaseUrl() +
+    applyNowCampaignIds[experience].MOBILE_PAYMENT_ESTIMATOR_APPLY_NOW;
+    if (getSpecialPromotionDates() && getSpecialPromotionDates().promoStartDate) {
+      desktopUrl = getBaseUrl() +
+        applyNowCampaignIds[experience].specialPromotion.DESKTOP_PAYMENT_ESTIMATOR_SPECIAL_PROMO;
+      mobileUrl = getBaseUrl() +
+        applyNowCampaignIds[experience].specialPromotion.MOBILE_PAYMENT_ESTIMATOR_SPECIAL_PROMO;
+    } else if (getTieredPromotionDates() && getTieredPromotionDates().promoStartDate) {
+      desktopUrl = getBaseUrl() +
+      applyNowCampaignIds[experience].DESKTOP_PAYMENT_ESTIMATOR_PROMO_APPLY_NOW;
+      mobileUrl = getBaseUrl() +
+      applyNowCampaignIds[experience].MOBILE_PAYMENT_ESTIMATOR_PROMO_APPLY_NOW;
+    }
+    if (isAppliance
+     && getAppliancePromotionDates() && getAppliancePromotionDates().promoStartDate) {
+      desktopUrl = getBaseUrl() +
+      applyNowCampaignIds[experience].appliance.DESKTOP_APPLIANCE_PROMO;
+      mobileUrl = getBaseUrl() +
+      applyNowCampaignIds[experience].appliance.MOBILE_APPLIANCE_PROMO;
+    }
+    return {
+      desktopUrl: desktopUrl, // eslint-disable-line
+      mobileUrl: mobileUrl // eslint-disable-line
+    };
+  };
+  const getDefaultApplyNowLinks = function (pageName) {
+    const experience = (pageName && applyNowCampaignIds[pageName.toLowerCase()]) ? pageName.toLowerCase() : 'pip';
+    if (getSpecialPromotionDates() && getSpecialPromotionDates().promoStartDate) {
+      return {
+        desktopUrl: getBaseUrl() +
+          applyNowCampaignIds[experience].specialPromotion.DESKTOP_APPLY_NOW_SPECIAL_PROMO,
+        mobileUrl: getBaseUrl() +
+          applyNowCampaignIds[experience].specialPromotion.MOBILE_APPLY_NOW_SPECIAL_PROMO
+      };
+    }
+    return {
+      desktopUrl: getBaseUrl() + applyNowCampaignIds[experience].DESKTOP_APPLY_NOW,
+      mobileUrl: getBaseUrl() + applyNowCampaignIds[experience].MOBILE_APPLY_NOW
+    };
+  };
+  const getDoTheMathApplyNowLinks = function (userType) {
+    const baseUrl = (userType === 'B2B' || userType === 'B2X') ? BASE_APPLY_NOW_URL : getBaseUrl();
+    if (getSpecialPromotionDates() && getSpecialPromotionDates().promoStartDate) {
+      return {
+        desktopUrl: baseUrl + applyNowCampaignIds.doTheMath.specialPromotion.DESKTOP_SPECIAL_PROMO,
+        mobileUrl: baseUrl + applyNowCampaignIds.doTheMath.specialPromotion.MOBILE_SPECIAL_PROMO
+      };
+    }
+    return {
+      desktopUrl: baseUrl + applyNowCampaignIds.doTheMath.DESKTOP_APPLY_NOW,
+      mobileUrl: baseUrl + applyNowCampaignIds.doTheMath.MOBILE_APPLY_NOW
+    };
+  };
+  const getPrequalApplynowLinks = function (pageName, invitationNumber) {
+    const experience = (pageName && applyNowCampaignIds[pageName.toLowerCase()]) ? pageName.toLowerCase() : 'thankyou';
+    const sequenceNbrParameter = invitationNumber ? '&uid=' + invitationNumber : '';
+    return {
+      desktopUrl: getSaveCardBaseUrl() + applyNowCampaignIds[experience].DESKTOP_APPLY_NOW + '&sc=30062&app=preapp' + sequenceNbrParameter,
+      mobileUrl: getSaveCardBaseUrl() + applyNowCampaignIds[experience].MOBILE_APPLY_NOW + '&sc=30062&app=preapp' + sequenceNbrParameter
+    };
+  };
+  const getPrequalPromotionDates = function () {
+    return prequalDates;
+  };
+  const getPrequalCheckOfferLink = function () {
+    return prequalCheckLink;
+  };
+  window.THD = window.THD || {};
+  window.THD.PaymentEstimator = {
+    estimatedPayments: getEstimatedPayments,
+    financeEligibleAmount: getFinanceEligibleAmount,
+    tieredPromotionDates: getTieredPromotionDates,
+    paymentEstimatorApplynowLinks: getPaymentEstimatorApplynowLinks,
+    defaultApplynowLinks: getDefaultApplyNowLinks,
+    appliancePromotionDates: getAppliancePromotionDates,
+    doTheMathApplyNowLinks: getDoTheMathApplyNowLinks,
+    currentPromotionDates: getCurrentPromotionDates,
+    toolTipText: getTooltipText,
+    prequalApplyNowLinks: getPrequalApplynowLinks,
+    prequalDates: getPrequalPromotionDates,
+    prequalCheckOfferLink: getPrequalCheckOfferLink
+  };
+}());

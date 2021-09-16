@@ -30,6 +30,10 @@ export class Product {
       this.width = this.width * METER_FACTOR;
       this.height = this.height * METER_FACTOR;
       this.unit = SizeUnit.Centimeter;
+    } else {
+      // unit is in cm but we need to convert to meters
+      this.width = Math.trunc(this.width / 100);
+      this.height = Math.trunc(this.height / 100);
     }
     this.aspect_ratio = this.width / this.height;
   }

@@ -1,0 +1,293 @@
+(function closure(root, factory) {
+  if (typeof define === 'function' && define.amd) {
+    define(['cookie-utils', 'Localizer', '@thd-olt-global/thd-customer'], function cb(cookieUtils, Localizer, THDCustomer) {
+      return factory(cookieUtils, Localizer, THDCustomer, root);
+    });
+  } else {
+    root.Localizer = root.Localizer || (root.THD_LOCALIZER_AUTO_INIT && root.THD_LOCALIZER_AUTO_INIT.Localizer);
+    root.digitalData = factory(root.cookieUtils, root.Localizer, root.THDCustomer, root);
+  }
+})(this, function closure(cookieUtils, Localizer, THDCustomer, root) {
+  root.THD = root.THD || {};
+  root.THD.Analytics = root.THD.Analytics || {};
+  root.digitalData = root.digitalData || {};
+  root.THD.Analytics.GlobalDDO = root.digitalData;
+  root.digitalData.event = root.digitalData.event || [];
+  root.digitalData.legacy = root.digitalData.legacy || {};
+  if (!cookieUtils.parseJWTCookie) {
+    console.log('%c DigitalData v5 requires cookieUtils >= 2.1.0', 'background: #222; color: #bada55');// eslint-disable-line
+  }
+
+  // CustomEvent needed to publish `globalDDOready`
+  // https://github.com/krambuhl/custom-event-polyfill/blob/master/custom-event-polyfill.js
+  try {
+    var ce = new root.CustomEvent('test', {cancelable: true});
+    ce.preventDefault();
+    if (ce.defaultPrevented !== true) {
+      // IE has problems with .preventDefault() on custom events
+      // http://stackoverflow.com/questions/23349191
+      throw new Error('Could not prevent default');
+    }
+  } catch(e) {
+    var CustomEvent = function _CustomEvent(event, params) {
+      var evt;
+      var origPrevent;
+      params = params || {//eslint-disable-line
+        bubbles: false,
+        cancelable: false,
+        detail: undefined
+      };
+
+      evt = document.createEvent('CustomEvent');
+      evt.initCustomEvent(event, params.bubbles, params.cancelable, params.detail);
+      origPrevent = evt.preventDefault;
+      evt.preventDefault = function pv() {
+        origPrevent.call(this);
+        try {
+          Object.defineProperty(this, 'defaultPrevented', {
+            get: function get() {
+              return true;
+            }
+          });
+        } catch(err) {
+          this.defaultPrevented = true;
+        }
+      };
+      return evt;
+    };
+
+    CustomEvent.prototype = root.Event.prototype;
+    root.CustomEvent = CustomEvent; // expose definition to window
+  }
+
+
+  /* Setting storage to capture persistant methods
+  --------------------------------------------------------*/
+  root.THD.Analytics.setStorage = function setStorage(key, msg) {
+    if (!msg) {
+      msg = key;//eslint-disable-line
+      key = 'localizationMethod';//eslint-disable-line
+
+      // this will become private in the near future, however dont want to break apps,
+      // new feature is the second parameter, so apps using this that shouldnt be will not be
+      // calling it with `msg`. So if this fn is invoked without, we log a warning to the dev.
+      console.log('%c `THD.Analytics.setStorage` is considered private and should not be used by your application', 'background: #222; color: #bada55');// eslint-disable-line
+    }
+    try {
+      root.localStorage.setItem(key, msg);
+    } catch (e) {
+      console.log(e);//eslint-disable-line
+      return;
+    }
+  };
+
+  /*
+    returns text string for mobile /tablet/desktop/mobile
+  ---------------------------------------------------------------------------*/
+  // pass in optional userAgent for unit test since you cant stub window.navigator
+  function getExperienceType(userAgent) {
+    var channelString = 'desktop';
+    if (typeof root.THD_GLOBAL !== 'undefined' && root.THD_GLOBAL.channel === 'mobile') {
+      channelString = 'mobile';
+    } else if (root.navigator) {
+      if (/ipad/i.test(userAgent || root.navigator.userAgent)) {
+        channelString = 'tablet';
+      }
+    }
+    return channelString;
+  }
+
+  function transformExperienceMetadata(metadata) {
+    var meta = typeof metadata === 'string'
+      ? JSON.parse(metadata)
+      : metadata || {};
+    return meta;
+  }
+
+  function isKMSIenrolled() {
+    return THDCustomer.default.isKMSI;
+  }
+
+  function isUserLoggedIn() {
+    var authStatus = 'guest';
+
+    // check if KMSI enrolled user. if THDCustomer.default.isKMSI=false, then it is a guest user.
+    if(isKMSIenrolled()) {
+      // get the auth status for KMSI enrolled user
+      authStatus = THDCustomer.default.isPersistedKMSI ? 'persisted|kmsi' : 'authenticated|kmsi';
+    } else { // post cookie consolidation this logic needs to be reworked.
+      if (THDCustomer.default.isLoggedIn) {
+        return 'authenticated';
+      } else if (THDCustomer.default.isPersisted) {
+        return 'persisted';
+      }
+    }
+
+    return authStatus;
+  }
+  function convertToMMYY(date) {
+    var yyymmdd = date.toISOString().split('T')[0];
+    return convertYYYYMMDDToMMYY(yyymmdd);
+  }
+  function convertYYYYMMDDToMMYY(yyyymmdd) {
+    var dArray = yyyymmdd.split('-');
+    var mm = dArray[1];
+    var yy = dArray[0].slice(2);
+    return mm + '-' + yy;
+  }
+  function perksEnrollmentDate() {
+    if (sessionStorage.getItem('perkProgramStartDate')) {
+      var perksEnrollmentDate = sessionStorage.getItem('perkProgramStartDate');
+      var perksEnrollmentConvertedDate = convertToMMYY(new Date(perksEnrollmentDate));
+    };
+    return perksEnrollmentConvertedDate;
+  }
+  function pricingProgram() {
+    if (sessionStorage.getItem('pricingProgramNumber')) {
+      var pricingProgramNumber = sessionStorage.getItem('pricingProgramNumber');
+      if(pricingProgramNumber === '584'|| '826'|| '8692'){
+        var pricingProgramName= 'plumber';
+      }
+    };
+    return pricingProgramName;
+  }
+  /* returns the Global Digital Data Object
+  ------------------------------------------------ */
+  return {
+    // Either expose private methods to fully test, or remove completely and not test
+    __private__: {
+      parseJWTCookie: cookieUtils.parseJWTCookie,
+      getJWTPayload: cookieUtils.getJWTPayload,
+      getExperienceType: getExperienceType,
+      transformExperienceMetadata: transformExperienceMetadata
+    },
+    init: function init() {
+      // Removed singleton as it was breaking single
+      // page apps like checkout.
+      // @TODO add back and create new method for single
+      // page apps such as `.refesh`.
+      var isB2BCustomer = THDCustomer.default.isB2BCustomer || THDCustomer.default.isB2XCustomer;
+
+      if (!cookieUtils.cookieManager) {
+        cookieUtils.initializeCookieManager();
+      }
+
+      var _DDO = root.digitalData;
+      window.THD.Analytics._DDO = _DDO;
+
+      // define site globals
+      _DDO.site = {
+        experienceType: getExperienceType(),
+        siteID: '',
+        betaSite: (function cb() {
+          var site = cookieUtils.readBrowserCookie('HD_DC');
+          if (site === 'origin') return 'prod';
+          if (site === 'beta') return 'beta';
+          return '';
+        })()
+      };
+      _DDO.site.siteId =  _DDO.site.siteID;
+
+      // define user globals
+      var store = Localizer.getLocalizedStore();
+      var userInsideStoreNumber;
+      // if user is in store we will pass along that info here other wise put "not in store"
+      if(Localizer.status.getStoreNumberIfUserIsInsideStore) {
+        userInsideStoreNumber = Localizer.status.getStoreNumberIfUserIsInsideStore();
+      }
+
+      _DDO.user = {
+        profile: {
+          authenticationStatus: !isB2BCustomer ? isUserLoggedIn() : '',
+          profileInfo: {
+            profileID: THDCustomer.default.svocID
+          }
+        },
+        localization: {
+          storeNumber: store ? store.storeId : 'not localized',
+          storeState: store ? store.state : '',
+          gpsPermission: Localizer.status.getGpsStatus(),
+          storeZip: store ? store.zipcode : '',
+          method: Localizer.status.getLocalizationMethod(),
+          inStoreNumber: userInsideStoreNumber || 'Not In Store'
+        }
+      };
+
+      // Capture B2B Analytics Globally
+      if (isB2BCustomer) {
+        var thdCustomer = cookieUtils.parseJWTCookie('THD_CUSTOMER');
+        _DDO.site.siteID = THDCustomer.default.customerType && THDCustomer.default.customerType.toLowerCase() + 'Site';
+        _DDO.site.siteId = _DDO.site.siteID;
+        _DDO.site.businessType = THDCustomer.default.customerType;
+
+        _DDO.user.b2bProfile = {
+          userType: THDCustomer.default.role,
+          userID: THDCustomer.default.userID,
+          accountID: THDCustomer.default.svocID,
+          userTradeType: THDCustomer.default.segment
+        }
+          //Capture Loyalty Perks and Preferred pricing Analytics Globally
+        if (typeof sessionStorage !== undefined) {
+          _DDO.user.b2bProfile.perks = {
+              enrollment: sessionStorage.getItem('perkProgramStatus') || 'not enrolled',
+              program: perksEnrollmentDate() || 'none',
+              tier: sessionStorage.getItem('perkCurrentTier') || 'none',
+            },
+            _DDO.user.b2bProfile.preferredPricing= {
+              enrollment: sessionStorage.getItem('pricingProgramStatus') || 'not enrolled',
+              program: pricingProgram() || 'none',
+              tier: sessionStorage.getItem('pricingCurrentTierName') || 'none',
+            }
+        };
+
+        if(isKMSIenrolled()) {
+          _DDO.user.profile.authenticationStatus = isUserLoggedIn();
+        } else {
+          _DDO.user.profile.authenticationStatus =
+          thdCustomer.v &&
+          new Date().getTime() - thdCustomer.v > 3600000
+            ? 'persisted'
+            : 'authenticated';
+        }
+      }
+
+      if (typeof window.experienceMetadata !== 'undefined') {
+        var cleanedExperienceMetadata = transformExperienceMetadata(window.experienceMetadata);
+        _DDO.appExperience = [cleanedExperienceMetadata];
+      }
+
+      // localization
+      var inStoreUser = Localizer.status.isUserInStore();
+
+      if ((_DDO.user.profile.authenticationStatus === 'authenticated') || (_DDO.user.profile.authenticationStatus === 'authenticated|kmsi')) {
+        _DDO.user.localization.method = 'my account sign-in';
+        root.THD.Analytics.setStorage('localizationMethod', 'my account sign-in');
+      }
+
+      if (inStoreUser) {
+        _DDO.user.localization.method = 'in store access';
+        root.THD.Analytics.setStorage('localizationMethod', 'in store access');
+      }
+
+      Localizer.on(Localizer.event.LOCALIZED, function cb() {
+        store = Localizer.getLocalizedStore();
+        _DDO.user.localization.storeNumber = store ? store.storeId : 'not localized';
+        _DDO.user.localization.storeState = store ? store.state : '';
+        _DDO.user.localization.storeZip = store ? store.zipcode : '';
+        _DDO.user.localization.method = Localizer.status.getLocalizationMethod();
+        _DDO.user.localization.gpsPermission = Localizer.status.getGpsStatus();
+      });
+
+      // emit event notifying that our global ddo is set
+      var event = new root.CustomEvent('globalDDOready', { detail: _DDO});
+      root.document.dispatchEvent(event);
+      if (root.THD_EVENT_BUS && root.THD_EVENT_BUS.lifeCycle) {
+        root.THD_EVENT_BUS.lifeCycle.trigger('ddo.ready', _DDO);
+      }
+      return _DDO;
+    },
+    get: function get() {
+      return root.digitalData;
+    }
+  };
+});

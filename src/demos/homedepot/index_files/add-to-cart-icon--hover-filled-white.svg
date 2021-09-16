@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="22px" height="18px" viewBox="0 0 22 18" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 53.2 (72643) - https://sketchapp.com -->
+    <title>bb_ATC_reghover</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+        <polygon id="path-1" points="0.4042 0.7411 3.6642 0.7411 3.6642 4 0.4042 4"></polygon>
+        <polygon id="path-3" points="0.5869 0.7411 3.8459 0.7411 3.8459 4 0.5869 4"></polygon>
+        <polygon id="path-5" points="0.0005 0.703 21.1575 0.703 21.1575 13.4878 0.0005 13.4878"></polygon>
+    </defs>
+    <g id="Symbols" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="bb_ATC_459_btn" transform="translate(-161.000000, -10.000000)">
+            <g id="ATC_Outline_NEW">
+                <g id="icon-+text" transform="translate(161.000000, 9.000000)">
+                    <g id="icon_ATC_hover">
+                        <g id="bb_ATC_regcart_hover">
+                            <g id="Group-3" transform="translate(7.000000, 14.297200)">
+                                <mask id="mask-2" fill="white">
+                                    <use xlink:href="#path-1"></use>
+                                </mask>
+                                <g id="Clip-2"></g>
+                                <path d="M3.6642,2.3701 C3.6642,3.2701 2.9352,4.0001 2.0342,4.0001 C1.1342,4.0001 0.4042,3.2701 0.4042,2.3701 C0.4042,1.4701 1.1342,0.7411 2.0342,0.7411 C2.9352,0.7411 3.6642,1.4701 3.6642,2.3701" id="Fill-1" fill="#FFFFFF" mask="url(#mask-2)"></path>
+                            </g>
+                            <g id="Group-6" transform="translate(13.000000, 14.297200)">
+                                <mask id="mask-4" fill="white">
+                                    <use xlink:href="#path-3"></use>
+                                </mask>
+                                <g id="Clip-5"></g>
+                                <path d="M3.8459,2.3701 C3.8459,3.2701 3.1169,4.0001 2.2169,4.0001 C1.3169,4.0001 0.5869,3.2701 0.5869,2.3701 C0.5869,1.4701 1.3169,0.7411 2.2169,0.7411 C3.1169,0.7411 3.8459,1.4701 3.8459,2.3701" id="Fill-4" fill="#FFFFFF" mask="url(#mask-4)"></path>
+                            </g>
+                            <g id="Group-9" transform="translate(0.000000, 0.297200)">
+                                <mask id="mask-6" fill="white">
+                                    <use xlink:href="#path-5"></use>
+                                </mask>
+                                <g id="Clip-8"></g>
+                                <polygon id="Fill-7" fill="#FFFFFF" mask="url(#mask-6)" points="17.2805 13.4878 6.9085 13.4878 3.2685 2.7028 0.0005 2.7028 0.0005 0.7028 4.7045 0.7028 5.6385 3.4728 21.1575 3.4728"></polygon>
+                            </g>
+                        </g>
+                    </g>
+                </g>
+            </g>
+        </g>
+    </g>
+</svg>
