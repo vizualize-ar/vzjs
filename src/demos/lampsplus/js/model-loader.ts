@@ -156,7 +156,7 @@ function loadResource( ) {
   // model = { scene: mesh };
   // model.visible = false;
 
-  return new Promise( ( resolve ) => {
+  return new Promise<void>( ( resolve ) => {
 
     // Instantiate a loader
     const loader = new GLTFLoader();

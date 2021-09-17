@@ -9,6 +9,7 @@ module.exports = {
   entry: {
     // main: './src/index.ts',
     embed: './src/embed/embed.ts',
+    mockServiceWorker: './src/mockServiceWorker.js',
     "examples/rotator": './src/examples/rotator.ts',
     "examples/translate": './src/examples/translate.ts',
     "examples/gltfexport": './src/examples/gltfexport.ts',
@@ -50,7 +51,7 @@ module.exports = {
   devServer: {
     host: '0.0.0.0',
     port: 5000,
-    disableHostCheck: true,
+    // disableHostCheck: true,
   },
   plugins: [
     // new HtmlWebpackPlugin({

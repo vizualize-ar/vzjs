@@ -143,6 +143,7 @@ class Embed {
 
   async P1_init(): Promise<void> {
     try {
+      this.startMockServer();
       this.logDebugInfo();
       // Get config from window object created from product page
       this.config = window.vz_config;
@@ -154,12 +155,8 @@ class Embed {
         // Page might have multiple triggers on it for varying device sizes. Some are hidden
         // for specific screen sizes (eg, tablet vs phone). Find the one whose parent is visible.
         const triggers = Array.from(document.querySelectorAll<HTMLElement>('[data-vzid="ar-trigger"]'));
-        let trigger: HTMLElement = null;
-        for(trigger of triggers) {
-          if (trigger.parentElement.clientHeight > 0) {
-            break;
-          } 
-        }
+        const trigger: HTMLElement = triggers.find(x => x.parentElement.clientHeight > 0);
+
         if (await this.isARSupported()) {
           const customerApiKey = this.config.api_key;
 
@@ -309,6 +306,14 @@ class Embed {
     const isARSupported = await this.isARSupported();
     const hasConfig = window.vz_config && !!window.vz_config.api_key && !!window.vz_config.identifier;
     console.log("vzdbg", hasConfig, isQuickLook, isARSupported);
+  }
+
+  startMockServer(): void {
+    // Start the mocking conditionally.
+    if (process.env.NODE_ENV === 'development') {
+      const { worker } = require('../mocks/browser')
+      worker.start()
+    }
   }
 }
 
