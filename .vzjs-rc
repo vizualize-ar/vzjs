@@ -1,6 +1,6 @@
 {
   "apiUrl": "https://localhost:7000"
-  // "apiUrl": "https://192.168.1.18:7000"
+  // "apiUrl": "https://192.168.1.3:7000"
   // "apiUrl": "https://96f3210c14d1.ngrok.io"
   // "apiUrl": "https://api.vizualize.io"
 }
