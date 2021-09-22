@@ -64,7 +64,7 @@ module.exports = {
         {
           from: './src/examples/**/*.html',
           transformPath(targetPath, absolutePath) {
-            return targetPath.replace("src\\", "");
+            return targetPath.replace(/src[\\\/]/, "");
           },
           globOptions: {
             ignore: ['**/*.ts'],
@@ -73,7 +73,7 @@ module.exports = {
         {
           from: './src/demos/**/*',
           transformPath(targetPath, absolutePath) {
-            return targetPath.replace("src\\", "");
+            return targetPath.replace(/src[\\\/]/, "");
           },
           globOptions: {
             ignore: ['**/*.ts'],
@@ -82,7 +82,7 @@ module.exports = {
         {
           from: './src/sandbox/**/*',
           transformPath(targetPath, absolutePath) {
-            return targetPath.replace("src\\", "");
+            return targetPath.replace(/src[\\\/]/, "");
           },
           globOptions: {
             ignore: ['**/*.ts'],
