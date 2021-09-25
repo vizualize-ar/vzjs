@@ -13,9 +13,9 @@ delete config.config;
 delete config.configs;
 
 // Passed from start.js. This is the proxy url from the ngrok.io service used to avoid https CA errors in browser
-if (config.proxy) {
-  console.log("Changing API url to proxy ", config.proxy);
-  config.apiUrl = config.proxy;
+if (process.env.proxy) {
+  console.log("Changing API url to proxy ", process.env.proxy);
+  config.apiUrl = process.env.proxy;
 }
 
 module.exports = {

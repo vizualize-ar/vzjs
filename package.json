@@ -11,7 +11,6 @@
   },
   "dependencies": {
     "hammerjs": "^2.0.8",
-    "msw": "0.35.0",
     "three": "0.125.2",
     "webxr-polyfill": "^2.0.3"
   },
@@ -43,8 +42,5 @@
     "webpack-cli": "4.8.0",
     "webpack-dev-server": "4.2.1",
     "webpack-obfuscator": "^2.3.0"
-  },
-  "msw": {
-    "workerDirectory": "src"
   }
 }

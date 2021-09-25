@@ -143,7 +143,6 @@ class Embed {
 
   async P1_init(): Promise<void> {
     try {
-      this.startMockServer();
       this.logDebugInfo();
       // Get config from window object created from product page
       this.config = window.vz_config;
@@ -306,14 +305,6 @@ class Embed {
     const isARSupported = await this.isARSupported();
     const hasConfig = window.vz_config && !!window.vz_config.api_key && !!window.vz_config.identifier;
     console.log("vzdbg", hasConfig, isQuickLook, isARSupported);
-  }
-
-  startMockServer(): void {
-    // Start the mocking conditionally.
-    if (process.env.NODE_ENV === 'development') {
-      const { worker } = require('../mocks/browser')
-      worker.start()
-    }
   }
 }
 
