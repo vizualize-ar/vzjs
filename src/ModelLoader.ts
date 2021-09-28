@@ -53,6 +53,7 @@ export class ModelLoader {
   private reticle: THREE.Mesh = null;
   private model: THREE.Object3D = null;
   private modelPositioned = false;
+  private frameModel: THREE.Mesh = null;
 
   private hitTestSource: any = null;
   private hitTestSourceRequested = false;
@@ -315,7 +316,6 @@ export class ModelLoader {
   }
 
   loadResource(): Promise<void> {
-
     // var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
     // var material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
     // var mesh = new THREE.Mesh( geometry, material );
@@ -351,6 +351,28 @@ export class ModelLoader {
         (xhr) => {
           console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
         },
+        // called when loading has errors
+        (error) => {
+          console.error( 'An error happened', error );
+        }
+      );
+
+    });
+  }
+
+  loadBorder(path:string): Promise<void>{
+    return new Promise( ( resolve ) => {
+      // Load a glTF resource
+      let loader = new GLTFLoader();
+      loader.load(
+        path,
+        // called when the resource is loaded
+        (model) => {
+          this.frameModel = model.scene || model;
+          resolve();
+        },
+        // called while loading is progressing
+        (xhr) => {},
         // called when loading has errors
         (error) => {
           console.error( 'An error happened', error );
@@ -397,12 +419,55 @@ export class ModelLoader {
       pictureMaterial, // front
       borderMaterial // Back side
     ];
+  
+    // LOAD FRAME MODEL
+    try {
+      await this.loadBorder('./models3d/model.glb');
+    } catch {
+      // error happened, possibly couldn't load resource, no dice
+      return;
+    }
 
-    this.model = new THREE.Mesh(
+    // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
+    var boxFrame = new THREE.Box3().setFromObject( this.frameModel );
+    var sizeFrame = new THREE.Vector3();
+    boxFrame.getSize( sizeFrame );
+    
+    // GET MEASURE PLANE BOUNDING BOX AND 3D DIMENTIONS (Measure plane is a plane added as paiting mockup on blender, it's purpose is to get the hole dimentions on the frame)
+    let measure_plane = this.frameModel.children[0].children[0];
+    var boxMeasure = new THREE.Box3().setFromObject( measure_plane );
+    var sizeMeasure = new THREE.Vector3();
+    boxMeasure.getSize( sizeMeasure );
+
+    // CREATES THE PAINTING MODEL
+    let model = new THREE.Mesh(
       new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
       materials
     );
-    this.model.visible = false;
+    model.visible = false;
+    
+    // GET PAINTING BOUNDING BOX AND 3D DIMENTIONS
+    var boxModel = new THREE.Box3().setFromObject( model );
+    var sizeModel = new THREE.Vector3();
+    boxModel.getSize( sizeModel );
+
+    // CALCULATE SCALE FOR THE FRAME TO FIT THE PAINTING(Not painting fit the frame);
+    let newScaleX = (model.scale.x * sizeModel.x) / sizeMeasure.x;
+    let newScaleY = (model.scale.y * sizeModel.y) / sizeMeasure.z;
+
+    // SET THE NEW FRAME SCALE
+    this.frameModel.scale.x = newScaleX;
+    this.frameModel.scale.y = 0.05;
+    this.frameModel.scale.z = newScaleY;
+    
+    // ROTATE FRAME TO MATCH THE PAINTING(It initiates as front side up)
+    this.frameModel.rotation.x = Math.PI/2;
+    
+    // ADD NAME FOR FINDING IT LATER(If needed)
+    this.frameModel.name = "FRAME";
+    // ADD THE FRAME AS CHILD OF THE PAINTING
+    model.add(this.frameModel)
+    this.model = model;
 
     if (DEBUG_CONTROLS) {
       const guiPosition = ModelLoader.DatGui.addFolder("position");
