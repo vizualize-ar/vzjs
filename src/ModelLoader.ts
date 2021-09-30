@@ -496,7 +496,7 @@ export class ModelLoader {
     boxFrame1.getSize( sizeFrame1 );
     console.log(sizeFrame1)
 
-    const light4 = new THREE.DirectionalLight(0xffffbb,3);
+    const light4 = new THREE.DirectionalLight(0xffffff,3);
     light4.position.set(0, 0.3, 2);
     model.add(light4);
 
