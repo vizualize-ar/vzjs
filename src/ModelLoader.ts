@@ -1,11 +1,13 @@
 // import * as THREE from '/node_modules/three/build/three.module.js';
 import * as THREE from "three";
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
 import { RotatorZoom, RotatorZoomOptions } from "./RotatorZoom";
 // import { ARButton } from './jsm/webxr/ARButton.js';
 import { GLTFLoader } from './jsm/loaders/GLTFLoader';
 import { FBXLoader } from "./jsm/loaders/FBXLoader";
 import { ModelType } from "./lib/model-type";
 import { PlaneDirection } from "./lib/plane-direction";
+
 
 import * as dat from "dat.gui";
 // import init from "three-dat.gui"; // Import initialization method
@@ -183,6 +185,8 @@ export class ModelLoader {
     const light3 = new THREE.AmbientLight(0xffffff);
     this.scene.add(light3);
 
+ 
+
     const pointLight = new THREE.PointLight(
       0xffffff, // color
       7.0, // intensity
@@ -249,6 +253,26 @@ export class ModelLoader {
         document.getElementById(sqsAddToCart.id).click();
       }
     });
+
+
+    let _this = this;
+    new RGBELoader()
+    .setDataType( THREE.UnsignedByteType )
+    .setPath( './envassets/' )
+    .load( 'christmas_photo_studio_04_1k.hdr', function ( texture ) {
+
+        let pmremGenerator = new THREE.PMREMGenerator( _this.renderer );
+        let envMap = pmremGenerator.fromEquirectangular( texture ).texture;
+
+        // _this.scene.background = envMap;
+        _this.scene.environment = envMap;
+
+        texture.dispose();
+        pmremGenerator.dispose();
+    })
+    let pmremGenerator = new THREE.PMREMGenerator( this.renderer );
+    pmremGenerator.compileEquirectangularShader();
+
 
     // CONTROLS
     // cameraControls = new OrbitControls( camera, renderer.domElement );
@@ -422,7 +446,7 @@ export class ModelLoader {
   
     // LOAD FRAME MODEL
     try {
-      await this.loadBorder('./models3d/model.glb');
+      await this.loadBorder('./models3d/test2.glb');
     } catch {
       // error happened, possibly couldn't load resource, no dice
       return;
@@ -456,15 +480,26 @@ export class ModelLoader {
     let newScaleY = (model.scale.y * sizeModel.y) / sizeMeasure.z;
 
     // SET THE NEW FRAME SCALE
-    this.frameModel.scale.x = newScaleX;
-    this.frameModel.scale.y = 0.05;
-    this.frameModel.scale.z = newScaleY;
+    this.frameModel.scale.x = newScaleX ;
+    this.frameModel.scale.y = 0.03;
+    this.frameModel.scale.z = newScaleY ;
     
     // ROTATE FRAME TO MATCH THE PAINTING(It initiates as front side up)
     this.frameModel.rotation.x = Math.PI/2;
-    
+    this.frameModel.position.z += 0.05;
     // ADD NAME FOR FINDING IT LATER(If needed)
     this.frameModel.name = "FRAME";
+
+    // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
+    var boxFrame1 = new THREE.Box3().setFromObject( this.frameModel );
+    var sizeFrame1 = new THREE.Vector3();
+    boxFrame1.getSize( sizeFrame1 );
+    console.log(sizeFrame1)
+
+    const light4 = new THREE.DirectionalLight(0xffffbb,3);
+    light4.position.set(0, 0.3, 2);
+    model.add(light4);
+
     // ADD THE FRAME AS CHILD OF THE PAINTING
     model.add(this.frameModel)
     this.model = model;
