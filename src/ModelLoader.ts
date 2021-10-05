@@ -10,6 +10,7 @@ import { PlaneDirection } from "./lib/plane-direction";
 
 
 import * as dat from "dat.gui";
+import { ProductFrame } from "embed/product-model";
 // import init from "three-dat.gui"; // Import initialization method
 // init(dat); // Init three-dat.gui with Dat
 const REAL_WORLD_GEOMETRY = false;
@@ -36,6 +37,8 @@ export class ModelOptions {
     public width?: number,
     /** Height, in meters */
     public height?: number,
+    public frame?: ProductFrame,
+    
   ) {}
 }
 
@@ -384,7 +387,7 @@ export class ModelLoader {
     });
   }
 
-  loadBorder(path:string): Promise<void>{
+  loadBorder(path:string, texturePath:string): Promise<void>{
     return new Promise( ( resolve ) => {
       // Load a glTF resource
       let loader = new GLTFLoader();
@@ -392,7 +395,21 @@ export class ModelLoader {
         path,
         // called when the resource is loaded
         (model) => {
-          this.frameModel = model.scene || model;
+          this.frameModel = model.scene;
+
+          if(texturePath != null){
+            var texture = new THREE.TextureLoader().load(texturePath);
+            texture.encoding = THREE.sRGBEncoding;
+            texture.flipY = false; // for glTF models.
+            texture.needsUpdate = true;
+
+            this.frameModel.traverse((node:any) => {
+              if (node.isMesh) {
+                node.material.map = texture;
+                node.material.needsUpdate = true;
+              }
+            });
+          }
           resolve();
         },
         // called while loading is progressing
@@ -444,9 +461,11 @@ export class ModelLoader {
       borderMaterial // Back side
     ];
   
+    console.log(this.resource.frame);
     // LOAD FRAME MODEL
     try {
-      await this.loadBorder('./models3d/test2.glb');
+      let textureObj = this.resource.frame.textures.find((o:any) => o.name === 'brown');
+      await this.loadBorder(this.resource.frame.fullpath, textureObj.path);
     } catch {
       // error happened, possibly couldn't load resource, no dice
       return;
@@ -480,9 +499,9 @@ export class ModelLoader {
     let newScaleY = (model.scale.y * sizeModel.y) / sizeMeasure.z;
 
     // SET THE NEW FRAME SCALE
-    this.frameModel.scale.x = newScaleX ;
+    this.frameModel.scale.x = newScaleX + (newScaleX * 0.1);
     this.frameModel.scale.y = 0.03;
-    this.frameModel.scale.z = newScaleY ;
+    this.frameModel.scale.z = newScaleY + (newScaleY * 0.1);
     
     // ROTATE FRAME TO MATCH THE PAINTING(It initiates as front side up)
     this.frameModel.rotation.x = Math.PI/2;

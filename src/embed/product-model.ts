@@ -14,6 +14,7 @@ export class Product {
   // public model_type: ModelType;
   public model_direction: PlaneDirection;
   public models: ProductModel[];
+  public frame: ProductFrame;
 
   constructor(data: Product) {
     this.external_product_id = data.external_product_id;
@@ -25,6 +26,7 @@ export class Product {
     // this.model_type = data.model_type;
     this.model_direction = data.model_direction;
     this.models = data.models;
+    this.frame = data.frame;
 
     if (this.unit === SizeUnit.Inch) {
       this.width = this.width * METER_FACTOR;
@@ -48,6 +50,14 @@ export type ProductModel = {
   fullpath: string;
   thumbpath: string;
   model_type: ModelType;
+}
+
+export type ProductFrame = {
+  fullpath: string;
+  textures: Array<{
+    name: string;
+    path: string;
+  }>;
 }
 
 export enum SizeUnit {

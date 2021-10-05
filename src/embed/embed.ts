@@ -233,6 +233,7 @@ class Embed {
       product.aspect_ratio,
       product.width,
       product.height,
+      product.frame,
     );
     new ModelLoader(
       trigger,
