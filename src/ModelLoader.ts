@@ -460,9 +460,9 @@ export class ModelLoader {
   
     // LOAD FRAME MODEL
     if(this.resource.frame != null){
-      
+
       const textureObj = this.resource.frame.textures.find((o:any) => o.name === 'brown');
-      await this.loadBorder(this.resource.frame.fullpath, textureObj).then((border:any) => { 
+      await this.loadBorder(this.resource.frame.fullpath, textureObj.path).then((border:any) => { 
         // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
         var boxFrame = new THREE.Box3().setFromObject( border );
         var sizeFrame = new THREE.Vector3();
