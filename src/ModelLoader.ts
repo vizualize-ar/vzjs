@@ -58,7 +58,6 @@ export class ModelLoader {
   private reticle: THREE.Mesh = null;
   private model: THREE.Object3D = null;
   private modelPositioned = false;
-  private frameModel: THREE.Mesh = null;
 
   private hitTestSource: any = null;
   private hitTestSourceRequested = false;
@@ -387,7 +386,7 @@ export class ModelLoader {
     });
   }
 
-  loadBorder(path:string, texturePath:string): Promise<void>{
+  loadBorder(path:string, texturePath:string): Promise<void> {
     return new Promise( ( resolve ) => {
       // Load a glTF resource
       let loader = new GLTFLoader();
@@ -395,22 +394,20 @@ export class ModelLoader {
         path,
         // called when the resource is loaded
         (model) => {
-          this.frameModel = model.scene;
-
           if(texturePath != null){
             var texture = new THREE.TextureLoader().load(texturePath);
             texture.encoding = THREE.sRGBEncoding;
             texture.flipY = false; // for glTF models.
             texture.needsUpdate = true;
 
-            this.frameModel.traverse((node:any) => {
+            model.scene.traverse((node:any) => {
               if (node.isMesh) {
                 node.material.map = texture;
                 node.material.needsUpdate = true;
               }
             });
           }
-          resolve();
+          resolve(model.scene);
         },
         // called while loading is progressing
         (xhr) => {},
@@ -461,67 +458,70 @@ export class ModelLoader {
       borderMaterial // Back side
     ];
   
-    console.log(this.resource.frame);
     // LOAD FRAME MODEL
-    try {
-      let textureObj = this.resource.frame.textures.find((o:any) => o.name === 'brown');
-      await this.loadBorder(this.resource.frame.fullpath, textureObj.path);
-    } catch {
-      // error happened, possibly couldn't load resource, no dice
-      return;
+    if(this.resource.frame != null){
+      
+      const textureObj = this.resource.frame.textures.find((o:any) => o.name === 'brown');
+      await this.loadBorder(this.resource.frame.fullpath, textureObj).then((border:any) => { 
+        // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
+        var boxFrame = new THREE.Box3().setFromObject( border );
+        var sizeFrame = new THREE.Vector3();
+        boxFrame.getSize( sizeFrame );
+        
+        // GET MEASURE PLANE BOUNDING BOX AND 3D DIMENTIONS (Measure plane is a plane added as painting mockup in blender, its purpose is to get the dimensions of the frame)
+        let measure_plane = border.children[0].children[0];
+        var boxMeasure = new THREE.Box3().setFromObject( measure_plane );
+        var sizeMeasure = new THREE.Vector3();
+        boxMeasure.getSize( sizeMeasure );
+
+        // CREATES THE PAINTING MODEL
+        let model = new THREE.Mesh(
+          new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
+          materials
+        );
+        model.visible = false;
+        
+        // GET PAINTING BOUNDING BOX AND 3D DIMENTIONS
+        var boxModel = new THREE.Box3().setFromObject( model );
+        var sizeModel = new THREE.Vector3();
+        boxModel.getSize( sizeModel );
+
+        // CALCULATE SCALE FOR THE FRAME TO FIT THE PAINTING(Not painting fit the frame);
+        let newScaleX = (model.scale.x * sizeModel.x) / sizeMeasure.x;
+        let newScaleY = (model.scale.y * sizeModel.y) / sizeMeasure.z;
+
+        // SET THE NEW FRAME SCALE
+        border.scale.x = newScaleX + (newScaleX * 0.1);
+        border.scale.y = 0.03;
+        border.scale.z = newScaleY + (newScaleY * 0.1);
+        
+        // ROTATE FRAME TO MATCH THE PAINTING(It initiates as front side up)
+        border.rotation.x = Math.PI/2;
+        border.position.z += 0.05;
+        // ADD NAME FOR FINDING IT LATER(If needed)
+        border.name = "FRAME";
+
+        // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
+        var boxFrame1 = new THREE.Box3().setFromObject( border );
+        var sizeFrame1 = new THREE.Vector3();
+        boxFrame1.getSize( sizeFrame1 );
+        console.log(sizeFrame1)
+
+        const light4 = new THREE.DirectionalLight(0xffffff,3);
+        light4.position.set(0, 0.3, 2);
+        model.add(light4);
+
+        // ADD THE FRAME AS CHILD OF THE PAINTING
+        model.add(border)
+        this.model = model;
+      });
+    }else{
+      this.model = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
+        materials
+      );
+      this.model.visible = false;
     }
-
-    // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
-    var boxFrame = new THREE.Box3().setFromObject( this.frameModel );
-    var sizeFrame = new THREE.Vector3();
-    boxFrame.getSize( sizeFrame );
-    
-    // GET MEASURE PLANE BOUNDING BOX AND 3D DIMENTIONS (Measure plane is a plane added as paiting mockup on blender, it's purpose is to get the hole dimentions on the frame)
-    let measure_plane = this.frameModel.children[0].children[0];
-    var boxMeasure = new THREE.Box3().setFromObject( measure_plane );
-    var sizeMeasure = new THREE.Vector3();
-    boxMeasure.getSize( sizeMeasure );
-
-    // CREATES THE PAINTING MODEL
-    let model = new THREE.Mesh(
-      new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
-      materials
-    );
-    model.visible = false;
-    
-    // GET PAINTING BOUNDING BOX AND 3D DIMENTIONS
-    var boxModel = new THREE.Box3().setFromObject( model );
-    var sizeModel = new THREE.Vector3();
-    boxModel.getSize( sizeModel );
-
-    // CALCULATE SCALE FOR THE FRAME TO FIT THE PAINTING(Not painting fit the frame);
-    let newScaleX = (model.scale.x * sizeModel.x) / sizeMeasure.x;
-    let newScaleY = (model.scale.y * sizeModel.y) / sizeMeasure.z;
-
-    // SET THE NEW FRAME SCALE
-    this.frameModel.scale.x = newScaleX + (newScaleX * 0.1);
-    this.frameModel.scale.y = 0.03;
-    this.frameModel.scale.z = newScaleY + (newScaleY * 0.1);
-    
-    // ROTATE FRAME TO MATCH THE PAINTING(It initiates as front side up)
-    this.frameModel.rotation.x = Math.PI/2;
-    this.frameModel.position.z += 0.05;
-    // ADD NAME FOR FINDING IT LATER(If needed)
-    this.frameModel.name = "FRAME";
-
-    // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
-    var boxFrame1 = new THREE.Box3().setFromObject( this.frameModel );
-    var sizeFrame1 = new THREE.Vector3();
-    boxFrame1.getSize( sizeFrame1 );
-    console.log(sizeFrame1)
-
-    const light4 = new THREE.DirectionalLight(0xffffff,3);
-    light4.position.set(0, 0.3, 2);
-    model.add(light4);
-
-    // ADD THE FRAME AS CHILD OF THE PAINTING
-    model.add(this.frameModel)
-    this.model = model;
 
     if (DEBUG_CONTROLS) {
       const guiPosition = ModelLoader.DatGui.addFolder("position");
