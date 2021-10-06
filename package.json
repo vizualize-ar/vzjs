@@ -10,6 +10,7 @@
     "build:prod": "cross-env NODE_ENV=production webpack --mode=production --config webpack.prod.js"
   },
   "dependencies": {
+    "file-loader": "^6.2.0",
     "hammerjs": "^2.0.8",
     "three": "0.125.2",
     "webxr-polyfill": "^2.0.3"

@@ -1,5 +1,6 @@
 // import * as THREE from '/node_modules/three/build/three.module.js';
 import * as THREE from "three";
+import { RGBELoader } from 'three/examples/jsm/loaders/RGBELoader'
 import { RotatorZoom, RotatorZoomOptions } from "./RotatorZoom";
 // import { ARButton } from './jsm/webxr/ARButton.js';
 import { GLTFLoader } from './jsm/loaders/GLTFLoader';
@@ -7,7 +8,9 @@ import { FBXLoader } from "./jsm/loaders/FBXLoader";
 import { ModelType } from "./lib/model-type";
 import { PlaneDirection } from "./lib/plane-direction";
 
+
 import * as dat from "dat.gui";
+import { ProductFrame } from "embed/product-model";
 // import init from "three-dat.gui"; // Import initialization method
 // init(dat); // Init three-dat.gui with Dat
 const REAL_WORLD_GEOMETRY = false;
@@ -34,6 +37,8 @@ export class ModelOptions {
     public width?: number,
     /** Height, in meters */
     public height?: number,
+    public frame?: ProductFrame,
+    
   ) {}
 }
 
@@ -182,6 +187,8 @@ export class ModelLoader {
     const light3 = new THREE.AmbientLight(0xffffff);
     this.scene.add(light3);
 
+ 
+
     const pointLight = new THREE.PointLight(
       0xffffff, // color
       7.0, // intensity
@@ -249,6 +256,26 @@ export class ModelLoader {
       }
     });
 
+
+    let _this = this;
+    new RGBELoader()
+    .setDataType( THREE.UnsignedByteType )
+    .setPath( './envassets/' )
+    .load( 'christmas_photo_studio_04_1k.hdr', function ( texture ) {
+
+        let pmremGenerator = new THREE.PMREMGenerator( _this.renderer );
+        let envMap = pmremGenerator.fromEquirectangular( texture ).texture;
+
+        // _this.scene.background = envMap;
+        _this.scene.environment = envMap;
+
+        texture.dispose();
+        pmremGenerator.dispose();
+    })
+    let pmremGenerator = new THREE.PMREMGenerator( this.renderer );
+    pmremGenerator.compileEquirectangularShader();
+
+
     // CONTROLS
     // cameraControls = new OrbitControls( camera, renderer.domElement );
     // cameraControls.addEventListener( 'change', render );
@@ -315,7 +342,6 @@ export class ModelLoader {
   }
 
   loadResource(): Promise<void> {
-
     // var geometry = new THREE.CylinderBufferGeometry( 0.1, 0.1, 0.2, 32 ).translate( 0, 0.1, 0 );
     // var material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
     // var mesh = new THREE.Mesh( geometry, material );
@@ -351,6 +377,40 @@ export class ModelLoader {
         (xhr) => {
           console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
         },
+        // called when loading has errors
+        (error) => {
+          console.error( 'An error happened', error );
+        }
+      );
+
+    });
+  }
+
+  loadBorder(path:string, texturePath:string): Promise<void> {
+    return new Promise( ( resolve ) => {
+      // Load a glTF resource
+      let loader = new GLTFLoader();
+      loader.load(
+        path,
+        // called when the resource is loaded
+        (model) => {
+          if(texturePath != null){
+            var texture = new THREE.TextureLoader().load(texturePath);
+            texture.encoding = THREE.sRGBEncoding;
+            texture.flipY = false; // for glTF models.
+            texture.needsUpdate = true;
+
+            model.scene.traverse((node:any) => {
+              if (node.isMesh) {
+                node.material.map = texture;
+                node.material.needsUpdate = true;
+              }
+            });
+          }
+          resolve(model.scene);
+        },
+        // called while loading is progressing
+        (xhr) => {},
         // called when loading has errors
         (error) => {
           console.error( 'An error happened', error );
@@ -397,12 +457,71 @@ export class ModelLoader {
       pictureMaterial, // front
       borderMaterial // Back side
     ];
+  
+    // LOAD FRAME MODEL
+    if(this.resource.frame != null){
 
-    this.model = new THREE.Mesh(
-      new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
-      materials
-    );
-    this.model.visible = false;
+      const textureObj = this.resource.frame.textures.find((o:any) => o.name === 'brown');
+      await this.loadBorder(this.resource.frame.fullpath, textureObj.path).then((border:any) => { 
+        // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
+        var boxFrame = new THREE.Box3().setFromObject( border );
+        var sizeFrame = new THREE.Vector3();
+        boxFrame.getSize( sizeFrame );
+        
+        // GET MEASURE PLANE BOUNDING BOX AND 3D DIMENTIONS (Measure plane is a plane added as painting mockup in blender, its purpose is to get the dimensions of the frame)
+        let measure_plane = border.children[0].children[0];
+        var boxMeasure = new THREE.Box3().setFromObject( measure_plane );
+        var sizeMeasure = new THREE.Vector3();
+        boxMeasure.getSize( sizeMeasure );
+
+        // CREATES THE PAINTING MODEL
+        let model = new THREE.Mesh(
+          new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
+          materials
+        );
+        model.visible = false;
+        
+        // GET PAINTING BOUNDING BOX AND 3D DIMENTIONS
+        var boxModel = new THREE.Box3().setFromObject( model );
+        var sizeModel = new THREE.Vector3();
+        boxModel.getSize( sizeModel );
+
+        // CALCULATE SCALE FOR THE FRAME TO FIT THE PAINTING(Not painting fit the frame);
+        let newScaleX = (model.scale.x * sizeModel.x) / sizeMeasure.x;
+        let newScaleY = (model.scale.y * sizeModel.y) / sizeMeasure.z;
+
+        // SET THE NEW FRAME SCALE
+        border.scale.x = newScaleX + (newScaleX * 0.1);
+        border.scale.y = 0.03;
+        border.scale.z = newScaleY + (newScaleY * 0.1);
+        
+        // ROTATE FRAME TO MATCH THE PAINTING(It initiates as front side up)
+        border.rotation.x = Math.PI/2;
+        border.position.z += 0.05;
+        // ADD NAME FOR FINDING IT LATER(If needed)
+        border.name = "FRAME";
+
+        // GET FRAME BOUNDING BOX AND 3D DIMENTIONS
+        var boxFrame1 = new THREE.Box3().setFromObject( border );
+        var sizeFrame1 = new THREE.Vector3();
+        boxFrame1.getSize( sizeFrame1 );
+        console.log(sizeFrame1)
+
+        const light4 = new THREE.DirectionalLight(0xffffff,3);
+        light4.position.set(0, 0.3, 2);
+        model.add(light4);
+
+        // ADD THE FRAME AS CHILD OF THE PAINTING
+        model.add(border)
+        this.model = model;
+      });
+    }else{
+      this.model = new THREE.Mesh(
+        new THREE.BoxBufferGeometry(this.resource.width, this.resource.height, 0.05),
+        materials
+      );
+      this.model.visible = false;
+    }
 
     if (DEBUG_CONTROLS) {
       const guiPosition = ModelLoader.DatGui.addFolder("position");
